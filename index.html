@@ -394,18 +394,12 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="space-y-2">
-        <button 
-          onclick="shareApplication()" 
-          class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 px-6 rounded-2xl font-jua text-sm flex items-center justify-center gap-2 active:scale-98 transition shadow">
-          <i data-lucide="share-2" class="w-4 h-4"></i>
-          <span>친구에게 소식 공유하기</span>
-        </button>
-
+      <div>
         <button 
           onclick="resetToHome()" 
-          class="w-full bg-white border border-slate-200 text-slate-600 py-2.5 rounded-2xl text-xs font-semibold active:scale-98 transition">
-          처음 화면으로
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 px-6 rounded-2xl font-jua text-sm flex items-center justify-center gap-2 active:scale-98 transition shadow">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          <span>처음 화면으로</span>
         </button>
       </div>
 
@@ -1057,20 +1051,6 @@
       }
 
       updateSubmissionCount();
-    }
-
-    function shareApplication() {
-      playBeep('pop');
-      if (navigator.share) {
-        navigator.share({
-          title: '🎞️ 디즈니와 지브리의 행방불명 7기 모집',
-          text: '영화·애니 친목동아리 「디즈니와 지브리의 행방불명」 7기 크루 모집 중! 함께 떠나요 🚂✨',
-          url: window.location.href,
-        }).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert('신청 링크가 복사되었습니다! 친구들에게 공유해 보세요 💌');
-      }
     }
 
     function updateSubmissionCount() {
