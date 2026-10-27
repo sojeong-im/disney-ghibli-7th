@@ -245,56 +245,30 @@
 
       </div>
 
-      <!-- Action Buttons (Large, Tactile, Distinct & Minimal) -->
-      <div class="space-y-3 pt-2">
-        <!-- 1. 신청하기 (Primary CTA: 디즈니 레드 탑승권 스타일) -->
+      <!-- Action Buttons (Large, Clean & Distinct) -->
+      <div class="space-y-3 pt-3">
+        <!-- 1. 신청하기 (Primary) -->
         <button 
           onclick="startApplication()" 
-          class="w-full relative group overflow-hidden bg-gradient-to-r from-[#D63031] via-[#E17055] to-[#c92a2a] text-white py-4 sm:py-4.5 px-5 sm:px-6 rounded-2xl sm:rounded-3xl shadow-xl shadow-rose-600/35 hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-between border-2 border-white/30">
-          <div class="flex items-center gap-3.5 text-left">
-            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-2xl shadow-inner shrink-0 group-hover:scale-110 transition-transform">
-              🚂
-            </div>
-            <div>
-              <div class="text-lg sm:text-xl font-jua leading-tight flex items-center gap-2">
-                <span>7기 탑승권 신청하기</span>
-                <span class="text-[10px] sm:text-xs bg-white text-rose-600 px-2 py-0.5 rounded-full font-bold shadow-xs">START</span>
-              </div>
-              <p class="font-gaegu text-sm text-rose-100 font-bold mt-0.5 tracking-wide">
-                설레는 영화·애니 여정 함께 떠나요 🎟️
-              </p>
-            </div>
-          </div>
-          <i data-lucide="chevron-right" class="w-6 h-6 text-white/90 group-hover:translate-x-1.5 transition-transform shrink-0"></i>
+          class="w-full h-14 sm:h-16 bg-[#D63031] hover:bg-[#c02627] text-white rounded-2xl font-jua text-xl tracking-wide shadow-md active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+          <span>신청하기</span>
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
         </button>
 
-        <!-- 2. 우리는 이런 걸 좋아해요 (Secondary CTA: 지브리 에메랄드 포토카드 스타일) -->
+        <!-- 2. 활동사진 보기 (Secondary) -->
         <button 
           onclick="openPhotoModal()" 
-          class="w-full relative group overflow-hidden bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#1e503b] text-white py-4 sm:py-4.5 px-5 sm:px-6 rounded-2xl sm:rounded-3xl shadow-xl shadow-emerald-950/30 hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-between border-2 border-emerald-300/20">
-          <div class="flex items-center gap-3.5 text-left">
-            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-2xl shadow-inner shrink-0 group-hover:scale-110 transition-transform">
-              📸
-            </div>
-            <div>
-              <div class="text-lg sm:text-xl font-jua leading-tight flex items-center gap-2">
-                <span>우리는 이런 걸 좋아해요!</span>
-                <span class="text-[10px] sm:text-xs bg-emerald-300/30 text-emerald-100 border border-emerald-300/50 px-2 py-0.5 rounded-full font-bold">PHOTO</span>
-              </div>
-              <p class="font-gaegu text-sm text-emerald-100 font-bold mt-0.5 tracking-wide">
-                활동 사진 & 최애 굿즈·팝업 구경하기 ✨
-              </p>
-            </div>
-          </div>
-          <i data-lucide="sparkles" class="w-5 h-5 text-emerald-200 group-hover:rotate-12 transition-transform shrink-0"></i>
+          class="w-full h-14 sm:h-16 bg-white hover:bg-slate-50 border-2 border-slate-800 text-slate-800 rounded-2xl font-jua text-xl tracking-wide shadow-xs active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+          <i data-lucide="camera" class="w-5 h-5 text-slate-700"></i>
+          <span>활동사진 보기</span>
         </button>
 
         <!-- Minimal Footer Link -->
-        <div class="flex items-center justify-between text-[11px] text-slate-400 px-2 pt-1">
-          <button onclick="openIntroModal()" class="hover:text-slate-600 underline underline-offset-2 transition">동아리 상세 소개</button>
-          <a href="admin.html" target="_blank" class="hover:text-rose-500 underline underline-offset-2 flex items-center gap-1 font-medium transition">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-rose-500"></i>
-            <span>운영진 센터 (<span id="submissionCount">0</span>)</span>
+        <div class="flex items-center justify-between text-xs text-slate-400 px-2 pt-1 font-gaegu font-bold">
+          <button onclick="openIntroModal()" class="hover:text-slate-600 underline underline-offset-2 transition">동아리 소개</button>
+          <a href="admin.html" target="_blank" class="hover:text-slate-600 underline underline-offset-2 flex items-center gap-1 transition">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>운영진 센터</span>
           </a>
         </div>
       </div>
@@ -442,10 +416,9 @@
       <div class="p-4 px-5 border-b border-amber-200/60 flex items-center justify-between bg-white/70">
         <div>
           <h3 class="font-jua text-base text-slate-800 flex items-center gap-1.5">
-            <span>✨</span>
-            <span>우리는 이런 걸 좋아해요!</span>
+            <span>동아리 활동사진 📸</span>
           </h3>
-          <p class="font-gaegu text-xs text-slate-500 font-bold mt-0.5">애니메이션·캐릭터 굿즈와 소소한 취향 공유 🤍</p>
+          <p class="font-gaegu text-xs text-slate-500 font-bold mt-0.5">정기 모임 & 팝업·전시 탐방</p>
         </div>
         <button onclick="closePhotoModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition">
           <i data-lucide="x" class="w-4 h-4"></i>
