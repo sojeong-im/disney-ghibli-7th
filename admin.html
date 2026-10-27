@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎞️ 7기 운영진 관리자 센터 - 디즈니와 지브리의 행방불명</title>
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Firebase App & Firestore SDKs (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Gowun Dodum', sans-serif;
+      background-color: #F8FAFC;
+    }
+    .font-jua {
+      font-family: 'Jua', cursive;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col">
+
+  <!-- ============================================== -->
+  <!-- 1. PASSCODE LOCK SCREEN (보안 잠금) -->
+  <!-- ============================================== -->
+  <div id="lockScreen" class="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center space-y-4 animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-inner">
+        🔒
+      </div>
+
+      <div>
+        <h2 class="text-xl font-jua text-slate-800">운영진 전용 관리자</h2>
+        <p class="text-xs text-slate-500 mt-1">접속을 위해 비밀번호를 입력해 주세요.</p>
+      </div>
+
+      <form onsubmit="handleLogin(event)" class="space-y-3">
+        <input 
+          id="passInput" 
+          type="password" 
+          placeholder="비밀번호 입력 (기본: 7777)" 
+          class="w-full bg-slate-50 border-2 border-slate-200 focus:border-rose-500 focus:bg-white rounded-2xl px-4 py-3 text-center text-sm tracking-widest outline-none transition"
+          autofocus
+        />
+        <div id="loginError" class="text-xs text-rose-500 font-bold hidden">
+          비밀번호가 올바르지 않습니다.
+        </div>
+        <button 
+          type="submit" 
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-2xl font-jua text-sm shadow-md active:scale-98 transition">
+          관리자 대시보드 입장
+        </button>
+      </form>
+
+      <p class="text-[11px] text-slate-400">
+        💡 초기 기본 비밀번호는 <code class="text-rose-600 font-bold">7777</code> 입니다.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 2. ADMIN DASHBOARD (대시보드 메인) -->
+  <!-- ============================================== -->
+  <div id="adminContent" class="flex-1 flex flex-col hidden">
+    
+    <!-- Top Header -->
+    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center font-bold text-base shadow-sm">
+            🎞️
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-lg font-jua text-slate-900">디즈니와 지브리의 행방불명</h1>
+              <span class="bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold px-2 py-0.5 rounded-md">7기 지원서 관리센터</span>
+            </div>
+            <p class="text-xs text-slate-500">Firebase Firestore 실시간 데이터베이스 연동됨</p>
+          </div>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="flex items-center gap-2">
+          <a 
+            href="/" 
+            target="_blank"
+            class="text-xs text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl font-medium transition flex items-center gap-1.5">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            <span>지원서 폼 보기</span>
+          </a>
+          <button 
+            onclick="exportToCSV()" 
+            class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-1.5 transition active:scale-95">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>CSV (엑셀) 다운로드</span>
+          </button>
+          <button 
+            onclick="logout()" 
+            class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition" 
+            title="로그아웃">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Body -->
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6 flex-1">
+      
+      <!-- Metrics Overview Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <!-- Total -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+          <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
+            <span>총 지원자</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </div>
+          <p id="totalCount" class="text-2xl sm:text-3xl font-jua text-slate-900">0</p>
+          <p class="text-[11px] text-slate-400">전체 접수된 지원서</p>
+        </div>
+
+        <!-- Disney -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-amber-200/80 shadow-xs space-y-1">
+          <div class="flex items-center justify-between text-xs text-amber-800 font-bold">
+            <span>🏰 디즈니조</span>
+            <span class="text-[10px] bg-amber-50 px-1.5 py-0.5 rounded text-amber-700">모집 8명</span>
+          </div>
+          <p id="disneyCount" class="text-2xl sm:text-3xl font-jua text-amber-700">0</p>
+          <p class="text-[11px] text-slate-400">디즈니조 희망자</p>
+        </div>
+
+        <!-- Ghibli -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-emerald-200/80 shadow-xs space-y-1">
+          <div class="flex items-center justify-between text-xs text-emerald-800 font-bold">
+            <span>🌿 지브리조</span>
+            <span class="text-[10px] bg-emerald-50 px-1.5 py-0.5 rounded text-emerald-700">모집 12명</span>
+          </div>
+          <p id="ghibliCount" class="text-2xl sm:text-3xl font-jua text-emerald-700">0</p>
+          <p class="text-[11px] text-slate-400">지브리조 희망자</p>
+        </div>
+
+        <!-- Any / Flexible -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+          <div class="flex items-center justify-between text-xs text-slate-600 font-bold">
+            <span>💫 배정 자율</span>
+            <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">무관</span>
+          </div>
+          <p id="anyCount" class="text-2xl sm:text-3xl font-jua text-slate-700">0</p>
+          <p class="text-[11px] text-slate-400">둘 다 좋아요 희망자</p>
+        </div>
+      </div>
+
+      <!-- Filter & Search Controls -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <!-- Search Input -->
+        <div class="relative flex-1 min-w-[220px]">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input 
+            id="searchInput" 
+            type="text" 
+            placeholder="이름, 연락처, 학교, 전공, 최애작 검색..." 
+            class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-rose-400 rounded-xl text-xs sm:text-sm outline-none transition"
+            oninput="renderFilteredList()"
+          />
+        </div>
+
+        <!-- Filters -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Team Filter -->
+          <select 
+            id="teamFilter" 
+            onchange="renderFilteredList()" 
+            class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 font-medium outline-none">
+            <option value="all">전체 조 보기</option>
+            <option value="disney">🏰 디즈니조</option>
+            <option value="ghibli">🌿 지브리조</option>
+            <option value="any">💫 자율 배정</option>
+          </select>
+
+          <!-- Refresh Button -->
+          <button 
+            onclick="fetchSubmissions()" 
+            class="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-600 transition" 
+            title="새로고침">
+            <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Submissions Table Card -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50/80 border-b border-slate-200/80 text-slate-500 font-semibold uppercase tracking-wider">
+              <tr>
+                <th class="py-3 px-4 w-12">#</th>
+                <th class="py-3 px-4">이름</th>
+                <th class="py-3 px-4">나이 / 성별</th>
+                <th class="py-3 px-4">학교 / 학과 / 학년</th>
+                <th class="py-3 px-4">연락처</th>
+                <th class="py-3 px-4">인스타그램</th>
+                <th class="py-3 px-4">희망 조</th>
+                <th class="py-3 px-4">참여도</th>
+                <th class="py-3 px-4">접수 일시</th>
+                <th class="py-3 px-4 text-center w-28">상세 / 관리</th>
+              </tr>
+            </thead>
+            <tbody id="submissionsTableBody" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="py-16 text-center text-slate-400 space-y-2 hidden">
+          <i data-lucide="inbox" class="w-12 h-12 mx-auto text-slate-300"></i>
+          <p class="font-jua text-base text-slate-600">접수된 지원서가 없습니다.</p>
+          <p class="text-xs">지원자가 사이트에서 신청서를 제출하면 실시간으로 여기에 나타납니다.</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="py-16 text-center text-slate-400 space-y-2">
+          <div class="w-8 h-8 border-3 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p class="text-xs">파이어베이스에서 지원서 목록을 불러오는 중...</p>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 3. DETAIL VIEW MODAL (10개 문항 전체 열람 팝업) -->
+  <!-- ============================================== -->
+  <div id="detailModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] border border-white/20 animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="p-4 px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl">📝</span>
+          <div>
+            <h3 class="font-jua text-base text-slate-800" id="detailModalTitle">지원서 상세 보기</h3>
+            <p class="text-[11px] text-slate-400" id="detailModalDate">-</p>
+          </div>
+        </div>
+        <button onclick="closeDetailModal()" class="w-7 h-7 rounded-full bg-slate-200/70 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (10 Questions List) -->
+      <div class="p-5 sm:p-6 overflow-y-auto custom-scroll space-y-4 text-xs flex-1" id="detailModalBody">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <button id="deleteBtn" onclick="deleteCurrentSubmission()" class="text-xs text-rose-500 hover:text-rose-700 px-3 py-2 rounded-xl hover:bg-rose-50 transition flex items-center gap-1">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          <span>지원서 삭제</span>
+        </button>
+        <button onclick="closeDetailModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold px-4 py-2 rounded-xl transition">
+          닫기
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- SCRIPT LOGIC -->
+  <!-- ============================================== -->
+  <script>
+    lucide.createIcons();
+
+    // Firebase Initialization
+    const firebaseConfig = {
+      apiKey: "AIzaSyC3p6doNq4qW9InQxUia81dwd1r1hlB6wQ",
+      authDomain: "disney-ghibli.firebaseapp.com",
+      projectId: "disney-ghibli",
+      storageBucket: "disney-ghibli.firebasestorage.app",
+      messagingSenderId: "1027457439444",
+      appId: "1:1027457439444:web:a7a745c8b2d5e52dd4cd41",
+      measurementId: "G-3EFCVMZL9Q"
+    };
+
+    let db = null;
+    try {
+      if (typeof firebase !== 'undefined') {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+      }
+    } catch (e) {
+      console.warn("Firebase Init Error:", e);
+    }
+
+    // State
+    let allSubmissions = [];
+    let currentDetailId = null;
+
+    // Password Check
+    const ADMIN_PASS = "7777";
+
+    function checkAuth() {
+      if (sessionStorage.getItem('admin_authenticated') === 'true') {
+        document.getElementById('lockScreen').classList.add('hidden');
+        document.getElementById('adminContent').classList.remove('hidden');
+        initDashboard();
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const input = document.getElementById('passInput');
+      const err = document.getElementById('loginError');
+
+      if (input.value.trim() === ADMIN_PASS) {
+        sessionStorage.setItem('admin_authenticated', 'true');
+        document.getElementById('lockScreen').classList.add('hidden');
+        document.getElementById('adminContent').classList.remove('hidden');
+        initDashboard();
+      } else {
+        err.classList.remove('hidden');
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    function logout() {
+      sessionStorage.removeItem('admin_authenticated');
+      location.reload();
+    }
+
+    function initDashboard() {
+      fetchSubmissions();
+      // Listen in real-time
+      if (db) {
+        db.collection("applications").onSnapshot((snapshot) => {
+          let list = [];
+          snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+          list.sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
+          allSubmissions = list;
+          updateMetrics();
+          renderFilteredList();
+        });
+      }
+    }
+
+    async function fetchSubmissions() {
+      document.getElementById('loadingState').classList.remove('hidden');
+      document.getElementById('emptyState').classList.add('hidden');
+      document.getElementById('submissionsTableBody').innerHTML = '';
+
+      let list = [];
+      if (db) {
+        try {
+          const snapshot = await db.collection("applications").get();
+          snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+          list.sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
+        } catch (e) {
+          console.warn("Fetch Firestore error, fallback to local:", e);
+          list = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+        }
+      } else {
+        list = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+      }
+
+      allSubmissions = list;
+      document.getElementById('loadingState').classList.add('hidden');
+      updateMetrics();
+      renderFilteredList();
+    }
+
+    function updateMetrics() {
+      const total = allSubmissions.length;
+      const disney = allSubmissions.filter(s => s.team_choice === 'disney').length;
+      const ghibli = allSubmissions.filter(s => s.team_choice === 'ghibli').length;
+      const any = allSubmissions.filter(s => s.team_choice === 'any').length;
+
+      document.getElementById('totalCount').innerText = total;
+      document.getElementById('disneyCount').innerText = disney;
+      document.getElementById('ghibliCount').innerText = ghibli;
+      document.getElementById('anyCount').innerText = any;
+    }
+
+    function renderFilteredList() {
+      const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      const teamFilter = document.getElementById('teamFilter').value;
+
+      const filtered = allSubmissions.filter(s => {
+        // Team filter
+        if (teamFilter !== 'all' && s.team_choice !== teamFilter) return false;
+
+        // Search query
+        if (query) {
+          const matchString = [
+            s.name, s.contact_phone, s.contact_insta_id, 
+            s.university_major, s.favorite_movie, s.reason_expectation
+          ].join(' ').toLowerCase();
+          if (!matchString.includes(query)) return false;
+        }
+
+        return true;
+      });
+
+      const tbody = document.getElementById('submissionsTableBody');
+      const empty = document.getElementById('emptyState');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+
+      const teamMap = {
+        'disney': '<span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-2 py-0.5 rounded-full text-[11px]">🏰 디즈니조</span>',
+        'ghibli': '<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2 py-0.5 rounded-full text-[11px]">🌿 지브리조</span>',
+        'any': '<span class="bg-slate-100 text-slate-700 border border-slate-300 font-bold px-2 py-0.5 rounded-full text-[11px]">💫 배정 자율</span>'
+      };
+
+      const rateMap = {
+        'active_all': '🔥 적극 참여',
+        'regular_only': '🎬 정기 위주',
+        'flexible': '🍃 자율 참여'
+      };
+
+      tbody.innerHTML = filtered.map((s, idx) => {
+        return `
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="py-3 px-4 font-bold text-slate-400">${idx + 1}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${s.name || '-'}</td>
+            <td class="py-3 px-4 text-slate-600">${s.age_gender || '-'}</td>
+            <td class="py-3 px-4 text-slate-600">${s.university_major || '-'}</td>
+            <td class="py-3 px-4 font-mono font-medium text-slate-800">${s.contact_phone || '-'}</td>
+            <td class="py-3 px-4 text-slate-600">${s.contact_insta_id || '-'}</td>
+            <td class="py-3 px-4">${teamMap[s.team_choice] || s.team_choice || '-'}</td>
+            <td class="py-3 px-4 text-slate-600">${rateMap[s.participation_rate] || s.participation_rate || '-'}</td>
+            <td class="py-3 px-4 text-slate-400 text-[11px]">${s.submittedAt || '-'}</td>
+            <td class="py-3 px-4 text-center">
+              <button 
+                onclick="openDetailModal('${s.id || idx}')" 
+                class="bg-slate-900 hover:bg-slate-800 text-white font-medium text-[11px] px-2.5 py-1.5 rounded-lg shadow-2xs active:scale-95 transition">
+                상세보기
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function openDetailModal(id) {
+      const sub = allSubmissions.find(s => (s.id === id || String(allSubmissions.indexOf(s)) === String(id)));
+      if (!sub) return;
+
+      currentDetailId = sub.id || null;
+
+      document.getElementById('detailModalTitle').innerText = `${sub.name || '지원자'} 님의 7기 지원서`;
+      document.getElementById('detailModalDate').innerText = `접수 일시: ${sub.submittedAt || '-'}`;
+
+      const teamMap = { 'disney': '🏰 디즈니조 (8명)', 'ghibli': '🌿 지브리조 (12명)', 'any': '💫 둘 다 좋아요! 배정에 맡길게요' };
+      const rateMap = { 
+        'active_all': '🔥 정기 모임과 번개 모두 적극 참여!', 
+        'regular_only': '🎬 정기 활동 위주로 참여', 
+        'flexible': '🍃 일정이 맞을 때 자율 참여' 
+      };
+
+      const activitiesText = Array.isArray(sub.activities) ? sub.activities.join(', ') : (sub.activities || '-');
+      const etcText = sub.activities_etc ? ` (기타 작성: ${sub.activities_etc})` : '';
+
+      document.getElementById('detailModalBody').innerHTML = `
+        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+          <div><span class="text-slate-400 font-medium">1. 이름:</span> <p class="font-bold text-slate-800 text-sm mt-0.5">${sub.name || '-'}</p></div>
+          <div><span class="text-slate-400 font-medium">2. 나이/성별:</span> <p class="font-bold text-slate-800 text-sm mt-0.5">${sub.age_gender || '-'}</p></div>
+          <div class="col-span-2"><span class="text-slate-400 font-medium">3. 학교/학과/학년:</span> <p class="font-semibold text-slate-800 mt-0.5">${sub.university_major || '-'}</p></div>
+          <div><span class="text-slate-400 font-medium">4. 연락처:</span> <p class="font-mono font-bold text-slate-800 mt-0.5">${sub.contact_phone || '-'}</p></div>
+          <div><span class="text-slate-400 font-medium">인스타그램:</span> <p class="font-semibold text-slate-800 mt-0.5">${sub.contact_insta_id || '-'}</p></div>
+        </div>
+
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium">6. 희망 조</span>
+          <p class="font-bold text-rose-600 text-sm bg-rose-50/60 p-2.5 rounded-xl border border-rose-100">${teamMap[sub.team_choice] || sub.team_choice || '-'}</p>
+        </div>
+
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium">5. 가장 좋아하는 영화·애니 & 이유</span>
+          <p class="font-medium text-slate-800 bg-amber-50/60 p-3 rounded-xl border border-amber-100 leading-relaxed">${sub.favorite_movie || '-'}</p>
+        </div>
+
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium">7. 해보고 싶은 활동</span>
+          <p class="font-medium text-slate-800 bg-slate-50 p-2.5 rounded-xl border border-slate-200">${activitiesText}${etcText}</p>
+        </div>
+
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium">8. 활동 참여 가능 정도</span>
+          <p class="font-medium text-slate-800 bg-slate-50 p-2.5 rounded-xl border border-slate-200">${rateMap[sub.participation_rate] || sub.participation_rate || '-'}</p>
+        </div>
+
+        <div class="space-y-1">
+          <span class="text-slate-400 font-medium">9. 지원 이유 & 기대하는 점</span>
+          <p class="font-medium text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-200 whitespace-pre-line leading-relaxed">${sub.reason_expectation || '-'}</p>
+        </div>
+
+        ${sub.self_intro ? `
+          <div class="space-y-1">
+            <span class="text-slate-400 font-medium">10. 자기소개</span>
+            <p class="font-medium text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-200 whitespace-pre-line leading-relaxed">${sub.self_intro}</p>
+          </div>
+        ` : ''}
+      `;
+
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+      currentDetailId = null;
+    }
+
+    async function deleteCurrentSubmission() {
+      if (!currentDetailId) return;
+      if (!confirm('정말로 이 지원서를 영구 삭제하시겠습니까?')) return;
+
+      if (db) {
+        try {
+          await db.collection("applications").doc(currentDetailId).delete();
+          alert('파이어베이스에서 지원서가 삭제되었습니다.');
+        } catch (e) {
+          alert('삭제 실패: ' + e.message);
+        }
+      }
+      closeDetailModal();
+      fetchSubmissions();
+    }
+
+    function exportToCSV() {
+      if (allSubmissions.length === 0) {
+        alert('내보낼 지원자 데이터가 없습니다.');
+        return;
+      }
+
+      const teamMap = { 'disney': '디즈니조(8명)', 'ghibli': '지브리조(12명)', 'any': '자율배정' };
+      const rateMap = { 
+        'active_all': '정기+번개 적극참여', 
+        'regular_only': '정기활동 위주', 
+        'flexible': '자율참여' 
+      };
+
+      const headers = [
+        '접수일시',
+        '이름',
+        '나이/성별',
+        '대학/학과/학년',
+        '연락처',
+        '인스타그램',
+        '희망조',
+        '최애작품과이유',
+        '희망활동',
+        '기타활동',
+        '참여가능정도',
+        '지원이유및기대',
+        '자기소개'
+      ];
+
+      const rows = allSubmissions.map(s => [
+        `"${s.submittedAt || ''}"`,
+        `"${(s.name || '').replace(/"/g, '""')}"`,
+        `"${(s.age_gender || '').replace(/"/g, '""')}"`,
+        `"${(s.university_major || '').replace(/"/g, '""')}"`,
+        `"${(s.contact_phone || '').replace(/"/g, '""')}"`,
+        `"${(s.contact_insta_id || '').replace(/"/g, '""')}"`,
+        `"${teamMap[s.team_choice] || s.team_choice || ''}"`,
+        `"${(s.favorite_movie || '').replace(/"/g, '""')}"`,
+        `"${(Array.isArray(s.activities) ? s.activities.join(';') : (s.activities || '')).replace(/"/g, '""')}"`,
+        `"${(s.activities_etc || '').replace(/"/g, '""')}"`,
+        `"${rateMap[s.participation_rate] || s.participation_rate || ''}"`,
+        `"${(s.reason_expectation || '').replace(/"/g, '""')}"`,
+        `"${(s.self_intro || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `디즈니_지브리_7기_전체지원자명단_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Modal background click
+    document.getElementById('detailModal').addEventListener('click', (e) => {
+      if (e.target.id === 'detailModal') closeDetailModal();
+    });
+
+    // Check login on load
+    checkAuth();
+  </script>
+</body>
+</html>
