@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>🎞️ 디즈니와 지브리의 행방불명 - 7기 지원서</title>
+  
+  <!-- Favicon / Meta -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏰</text></svg>">
+  
+  <!-- Google Fonts: Gowun Dodum, Jua, Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            dodum: ['"Gowun Dodum"', 'sans-serif'],
+            jua: ['"Jua"', 'cursive'],
+            outfit: ['"Outfit"', 'sans-serif'],
+          },
+          colors: {
+            ghibli: {
+              sky: '#7EC8E3',
+              cloud: '#F4F9FD',
+              bridge: '#E63946',
+              wood: '#6A4C3D',
+              parchment: '#FDFBF7',
+              gold: '#F4A261',
+              forest: '#2A9D8F',
+              night: '#1D3557',
+              charcoal: '#264653'
+            }
+          },
+          animation: {
+            'float-slow': 'float 6s ease-in-out infinite',
+            'float-mid': 'float 4s ease-in-out infinite',
+            'pulse-subtle': 'pulseSubtle 2.5s infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            },
+            pulseSubtle: {
+              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+              '50%': { opacity: '0.85', transform: 'scale(1.02)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input, textarea {
+      user-select: auto;
+    }
+    body {
+      font-family: 'Gowun Dodum', sans-serif;
+      background: #18283b;
+      color: #2D3748;
+      overflow-x: hidden;
+    }
+    .font-jua {
+      font-family: 'Jua', cursive;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(230, 57, 70, 0.35);
+      border-radius: 9999px;
+    }
+    .soot-sprite {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      background: #1e293b;
+      border-radius: 50%;
+      position: relative;
+    }
+    .soot-sprite::before, .soot-sprite::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+    }
+    .soot-sprite::before { left: 2px; box-shadow: 1px 0 0 0 #000; }
+    .soot-sprite::after { right: 2px; box-shadow: -1px 0 0 0 #000; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:p-4 bg-gradient-to-b from-[#1b3b5c] via-[#35618b] to-[#6d9ac2] relative">
+
+  <!-- Ambient Sky / Floating Glow Background -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute -top-20 -left-20 w-80 h-80 bg-sky-400/20 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/3 -right-20 w-80 h-80 bg-amber-300/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-20 left-1/4 w-96 h-96 bg-rose-500/15 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- Sound Toggle Button -->
+  <button id="soundToggle" onclick="toggleAudio()" class="fixed top-4 right-4 z-50 bg-white/85 hover:bg-white backdrop-blur-md px-3.5 py-2 rounded-full shadow-lg border border-white/60 text-xs font-medium text-slate-700 flex items-center gap-1.5 transition-all active:scale-95">
+    <i data-lucide="volume-2" class="w-4 h-4 text-rose-500"></i>
+    <span id="soundLabel">효과음 ON</span>
+  </button>
+
+  <!-- Main Container -->
+  <div class="relative z-10 w-full max-w-md md:max-w-lg min-h-screen sm:min-h-[820px] sm:max-h-[94vh] sm:rounded-3xl bg-[#FFFDF7] shadow-2xl flex flex-col overflow-hidden border border-white/80">
+
+    <!-- Top Accent Gradient Line -->
+    <div class="bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 h-1.5 w-full"></div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: HERO LANDING VIEW (활동사진 보기 & 신청하기) -->
+    <!-- ============================================== -->
+    <div id="heroView" class="flex-1 flex flex-col justify-between p-5 sm:p-7 transition-all duration-300 overflow-y-auto custom-scroll">
+      
+      <!-- Top Badges -->
+      <div class="flex items-center justify-between gap-2">
+        <div class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+          <span>7기 추가 모집 중</span>
+        </div>
+        <div class="flex items-center gap-1 text-[11px] text-slate-500 font-medium">
+          <i data-lucide="calendar" class="w-3.5 h-3.5 text-amber-500"></i>
+          <span>10.26 ~ 11.26</span>
+        </div>
+      </div>
+
+      <!-- Hero Visual (Poster + Club Identity) -->
+      <div class="my-auto py-3 flex flex-col items-center text-center">
+        <!-- Floating Visual Container -->
+        <div class="relative group cursor-pointer mb-3" onclick="openPhotoModal()">
+          <div class="absolute -inset-1.5 bg-gradient-to-tr from-rose-500 via-amber-400 to-sky-400 rounded-2xl blur-md opacity-45 group-hover:opacity-75 transition duration-500"></div>
+          
+          <div class="relative w-52 sm:w-60 aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border-2 border-white/90 bg-slate-100 transform transition-transform duration-500 group-hover:scale-[1.02]">
+            <img 
+              src="assets/poster.jpg" 
+              alt="디즈니와 지브리의 행방불명 7기 포스터" 
+              class="w-full h-full object-cover"
+              onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop'"
+            />
+            <div class="absolute bottom-2.5 inset-x-2.5 bg-black/60 backdrop-blur-md text-white py-1 px-2.5 rounded-xl text-[11px] flex items-center justify-center gap-1.5">
+              <i data-lucide="zoom-in" class="w-3.5 h-3.5 text-rose-300"></i>
+              <span>터치하여 포스터 크게보기</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Title & Subtitle -->
+        <div class="space-y-1.5">
+          <p class="text-xs font-semibold text-rose-600 tracking-wider">대학생 연합 영화·애니 친목동아리</p>
+          <h1 class="text-2xl sm:text-3xl font-jua text-slate-800 tracking-tight leading-snug flex items-center justify-center gap-1.5">
+            <span>🎞️</span>
+            <span class="bg-gradient-to-r from-slate-900 via-rose-700 to-slate-900 bg-clip-text text-transparent">디즈니와 지브리의 행방불명</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-600 max-w-xs mx-auto leading-relaxed pt-1">
+            좋아하는 작품을 함께 나누고,<br/>
+            영화 속 주인공처럼 <span class="text-rose-600 font-semibold">특별한 추억</span>을 만들어봐요! 🎬🤍
+          </p>
+        </div>
+
+        <!-- 7기 추가 모집 안내 배지 (조별 인원) -->
+        <div class="grid grid-cols-2 gap-2 w-full max-w-xs mt-3.5">
+          <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/80 rounded-xl p-2 text-center shadow-xs">
+            <span class="text-[11px] font-bold text-amber-800 flex items-center justify-center gap-1">
+              <span>🏰 디즈니조</span>
+            </span>
+            <p class="text-xs font-semibold text-slate-700 mt-0.5">추가 모집 <span class="text-rose-600 font-bold">8명</span></p>
+          </div>
+          <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200/80 rounded-xl p-2 text-center shadow-xs">
+            <span class="text-[11px] font-bold text-emerald-800 flex items-center justify-center gap-1">
+              <span>🌿 지브리조</span>
+            </span>
+            <p class="text-xs font-semibold text-slate-700 mt-0.5">추가 모집 <span class="text-rose-600 font-bold">12명</span></p>
+          </div>
+        </div>
+
+        <!-- 동아리 안내 팝업 토글 버튼 -->
+        <button onclick="openIntroModal()" class="mt-3 text-xs text-slate-500 hover:text-slate-800 underline underline-offset-4 flex items-center gap-1 transition">
+          <i data-lucide="info" class="w-3.5 h-3.5 text-rose-500"></i>
+          <span>동아리 상세 소개 및 활동 안내 보기</span>
+        </button>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2.5 pt-2">
+        <!-- 1. 신청하기 (Primary CTA) -->
+        <button 
+          onclick="startApplication()" 
+          class="w-full relative group overflow-hidden bg-gradient-to-r from-[#E63946] via-[#F43F5E] to-[#E11D48] text-white py-3.5 px-6 rounded-2xl font-jua text-lg tracking-wider shadow-lg shadow-rose-500/25 hover:shadow-xl hover:shadow-rose-500/35 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2">
+          <span class="relative z-10 flex items-center gap-2">
+            <span>✨ 7기 지원서 작성하기</span>
+            <i data-lucide="arrow-right" class="w-5 h-5 transition-transform group-hover:translate-x-1"></i>
+          </span>
+          <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition duration-1000"></div>
+        </button>
+
+        <!-- 2. 활동사진 보기 (Secondary Button) -->
+        <button 
+          onclick="openPhotoModal()" 
+          class="w-full bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-rose-300 text-slate-700 py-3 px-6 rounded-2xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.99] shadow-xs">
+          <i data-lucide="camera" class="w-4 h-4 text-rose-500"></i>
+          <span>📸 동아리 활동사진 둘러보기</span>
+        </button>
+
+        <!-- Footer Notice & Admin Access -->
+        <div class="flex items-center justify-between pt-1 px-1 text-[11px] text-slate-400">
+          <span>총 10개 문항 (약 2~3분 소요)</span>
+          <button onclick="openAdminModal()" class="hover:text-rose-500 underline underline-offset-2 transition-colors flex items-center gap-1">
+            <i data-lucide="clipboard-list" class="w-3 h-3"></i>
+            <span>운영진 접수 목록 (<span id="submissionCount">0</span>)</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: STEP-BY-STEP APPLICATION FORM -->
+    <!-- ============================================== -->
+    <div id="formView" class="hidden flex-1 flex flex-col justify-between p-5 sm:p-7 bg-[#FFFDF7] transition-all duration-300 overflow-y-auto custom-scroll">
+      
+      <!-- Top Navigation & Progress Bar -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <button onclick="prevStep()" class="p-1.5 -ml-1 text-slate-500 hover:text-slate-800 rounded-full hover:bg-slate-100 transition-colors flex items-center gap-1 text-xs">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            <span>이전</span>
+          </button>
+
+          <!-- Step Indicator -->
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-amber-50 border border-amber-200/80 px-3 py-1 rounded-full">
+            <span class="soot-sprite"></span>
+            <span id="stepCounterText">질문 1 / 10</span>
+          </div>
+
+          <button onclick="confirmExit()" class="p-1.5 -mr-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors" title="처음으로">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Progress Track -->
+        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+          <div id="progressBar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 10%;"></div>
+        </div>
+      </div>
+
+      <!-- Question Dynamic Card Area -->
+      <div id="questionContainer" class="my-auto py-2">
+        <!-- Rendered by JavaScript dynamically -->
+      </div>
+
+      <!-- Form Bottom Action Navigation -->
+      <div class="pt-4 border-t border-slate-100">
+        <div id="validationMsg" class="text-xs text-rose-500 font-medium mb-2 min-h-[18px] text-center opacity-0 transition-opacity">
+          필수 입력 사항을 확인해 주세요!
+        </div>
+
+        <button 
+          id="nextStepBtn"
+          onclick="nextStep()" 
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 px-6 rounded-2xl font-jua text-base tracking-wide shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+          <span id="nextBtnText">다음 질문으로</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+        <p class="text-center text-[11px] text-slate-400 mt-2">
+          <kbd class="px-1.5 py-0.5 text-[10px] font-sans bg-slate-100 border border-slate-200 rounded text-slate-500">Enter ↵</kbd> 키를 눌러 다음으로 이동할 수 있습니다.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: SUCCESS / BOARDING PASS TICKET -->
+    <!-- ============================================== -->
+    <div id="successView" class="hidden flex-1 flex flex-col justify-between p-5 sm:p-7 bg-[#FFFDF7] transition-all duration-500 text-center overflow-y-auto custom-scroll">
+      
+      <div class="my-auto py-2 space-y-3">
+        <!-- Animated Icon Badge -->
+        <div class="w-14 h-14 bg-rose-50 border-2 border-rose-200 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner animate-bounce">
+          🚂
+        </div>
+
+        <div class="space-y-1">
+          <h2 class="text-2xl font-jua text-slate-800">7기 지원서가 접수되었습니다!</h2>
+          <p class="text-xs text-slate-500">🎬 현실에서 잠깐 행방불명될 준비가 되셨나요?</p>
+        </div>
+
+        <!-- Boarding Ticket Style Card -->
+        <div class="bg-gradient-to-br from-amber-50 via-orange-50/50 to-rose-50/40 border-2 border-dashed border-amber-300 rounded-2xl p-4 sm:p-5 text-left relative overflow-hidden shadow-sm my-3">
+          <!-- Ticket Notch Left & Right -->
+          <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#FFFDF7] border-r-2 border-amber-300"></div>
+          <div class="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#FFFDF7] border-l-2 border-amber-300"></div>
+
+          <div class="flex items-center justify-between border-b border-amber-200/60 pb-2.5 mb-2.5">
+            <div>
+              <span class="text-[10px] font-bold tracking-widest text-amber-600 uppercase">Crew Boarding Pass</span>
+              <h3 class="text-sm font-bold text-slate-800 font-jua">디즈니와 지브리의 행방불명 7기</h3>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400">STATUS</span>
+              <p class="text-xs font-bold text-rose-600">접수 완료 (심사중)</p>
+            </div>
+          </div>
+
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between">
+              <span class="text-slate-500">이름</span>
+              <span id="ticketName" class="font-bold text-slate-800">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">희망 조</span>
+              <span id="ticketTeam" class="font-bold text-rose-600">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">연락처</span>
+              <span id="ticketContact" class="font-bold text-slate-800">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">인스타그램</span>
+              <span id="ticketInsta" class="font-bold text-slate-800">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">최애 작품</span>
+              <span id="ticketFavorite" class="font-medium text-slate-700 text-right max-w-[190px] truncate">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">접수 일시</span>
+              <span id="ticketDate" class="font-medium text-slate-500">-</span>
+            </div>
+          </div>
+
+          <!-- Emotional Ghibli Quote -->
+          <div class="mt-3 pt-2.5 border-t border-amber-200/60 text-center space-y-1">
+            <p class="text-[11px] text-amber-900 font-semibold">
+              "디즈니의 마법도, 지브리의 바람도, 이제 당신의 이야기입니다." ✨
+            </p>
+            <p class="text-[10px] text-slate-500">
+              모집 마감 후 개별 연락처를 통해 합격 및 활동 안내를 드릴 예정입니다.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-2">
+        <button 
+          onclick="shareApplication()" 
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 px-6 rounded-2xl font-jua text-sm flex items-center justify-center gap-2 active:scale-98 transition shadow">
+          <i data-lucide="share-2" class="w-4 h-4"></i>
+          <span>친구에게 7기 모집 소식 공유하기</span>
+        </button>
+
+        <button 
+          onclick="resetToHome()" 
+          class="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 py-2.5 rounded-2xl text-xs font-semibold active:scale-98 transition">
+          메인 화면으로 돌아가기
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: 동아리 소개 및 모집 요강 안내 MODAL -->
+  <!-- ============================================== -->
+  <div id="introModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[88vh] border border-white/20 animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="p-4 px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div>
+          <h3 class="font-jua text-lg text-slate-800 flex items-center gap-1.5">
+            <span>🎞️</span>
+            <span>동아리 소개 & 7기 모집 요강</span>
+          </h3>
+          <p class="text-xs text-slate-500">디즈니와 지브리의 행방불명 7기 크루 안내</p>
+        </div>
+        <button onclick="closeIntroModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="p-5 sm:p-6 overflow-y-auto custom-scroll space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed flex-1">
+        
+        <div class="bg-rose-50/70 border border-rose-200 rounded-2xl p-4 space-y-2">
+          <h4 class="font-jua text-rose-800 text-base">안녕하세요! 7기 모집에 오신 것을 환영합니다 🤍</h4>
+          <p>
+            저희는 디즈니와 지브리를 비롯한 다양한 영화와 애니메이션을 좋아하는 사람들이 모여 함께 작품을 감상하고, 취향을 공유하며 추억을 만들어가는 친목동아리입니다.
+          </p>
+          <p>
+            빔프로젝터로 영화를 함께 보기도 하고, 애니메이션 관련 카페·전시·팝업을 찾아가기도 해요! 영화에 대해 잘 몰라도 괜찮아요. 그저 영화를 좋아하고 새로운 사람들과 친해지고 싶다면 누구든 환영합니다. 🍿
+          </p>
+        </div>
+
+        <!-- 7기 추가 모집 안내 -->
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2.5">
+          <h4 class="font-jua text-slate-800 text-sm flex items-center gap-1.5">
+            <span>📌</span>
+            <span>7기 추가 모집 안내</span>
+          </h4>
+          <div class="space-y-1.5 text-xs text-slate-700">
+            <div class="flex items-center justify-between py-1 border-b border-slate-200/60">
+              <span class="text-slate-500">🏰 디즈니조</span>
+              <span class="font-bold text-amber-700">8명 추가 모집</span>
+            </div>
+            <div class="flex items-center justify-between py-1 border-b border-slate-200/60">
+              <span class="text-slate-500">🌿 지브리조</span>
+              <span class="font-bold text-emerald-700">12명 추가 모집</span>
+            </div>
+            <div class="flex items-center justify-between py-1 border-b border-slate-200/60">
+              <span class="text-slate-500">모집 기간</span>
+              <span class="font-semibold text-slate-800">10월 26일 ~ 11월 26일</span>
+            </div>
+            <div class="flex items-center justify-between py-1 border-b border-slate-200/60">
+              <span class="text-slate-500">활동 기간</span>
+              <span class="font-semibold text-slate-800">약 3~6개월</span>
+            </div>
+            <div class="flex items-center justify-between py-1">
+              <span class="text-slate-500">활동 주기</span>
+              <span class="font-semibold text-slate-800">격주 1회 정기 활동 (자율 참여)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 지원 전 확인 사항 -->
+        <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-4 space-y-2">
+          <h4 class="font-jua text-amber-900 text-sm flex items-center gap-1.5">
+            <span>⚠️</span>
+            <span>지원 전 꼭 확인해 주세요!</span>
+          </h4>
+          <ul class="list-disc list-inside space-y-1 text-xs text-amber-800">
+            <li>활동 기간은 약 3~6개월이며, 격주 1회 정기 활동을 진행합니다.</li>
+            <li>정기 활동은 자율 참여를 기본으로 합니다.</li>
+            <li>금전 사기 및 종교 권유 등 동아리 취지에 맞지 않는 활동이 확인될 경우 참여가 제한되거나 추방될 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <!-- Closing Vibe -->
+        <div class="text-center py-2 space-y-1 text-xs text-slate-500 italic">
+          <p>🎬 현실에서 잠깐 행방불명될 준비가 되셨나요?</p>
+          <p>이번엔 영화 속 주인공이 되어볼 차례입니다. ✨</p>
+        </div>
+
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex gap-2">
+        <button onclick="closeIntroModal(); startApplication();" class="flex-1 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 text-white font-jua py-3 rounded-xl shadow-md text-sm flex items-center justify-center gap-1.5 transition active:scale-98">
+          <span>확인했습니다! 지원서 작성하기 ✨</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: PHOTO GALLERY & POSTER MODAL -->
+  <!-- ============================================== -->
+  <div id="photoModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden flex items-center justify-center p-4 transition-opacity duration-300">
+    <div class="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[88vh] border border-white/20 animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="p-4 px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div>
+          <h3 class="font-jua text-lg text-slate-800 flex items-center gap-2">
+            <span>📸</span>
+            <span>동아리 활동 사진첩</span>
+          </h3>
+          <p class="text-xs text-slate-500">우리가 함께 만든 마법 같은 순간들</p>
+        </div>
+        <button onclick="closePhotoModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Gallery Filter Tabs -->
+      <div class="flex gap-2 px-6 py-3 border-b border-slate-100 overflow-x-auto text-xs font-medium no-scrollbar">
+        <button onclick="filterGallery('all')" class="gallery-tab px-3 py-1.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200 font-semibold shrink-0">전체보기</button>
+        <button onclick="filterGallery('poster')" class="gallery-tab px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 shrink-0">메인 포스터</button>
+        <button onclick="filterGallery('screening')" class="gallery-tab px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 shrink-0">영화 정기상영회</button>
+        <button onclick="filterGallery('exhibit')" class="gallery-tab px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 shrink-0">전시회 & 투어</button>
+        <button onclick="filterGallery('party')" class="gallery-tab px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 shrink-0">친목 번개 & 파티</button>
+      </div>
+
+      <!-- Gallery Scrollable Body -->
+      <div id="galleryGrid" class="p-6 overflow-y-auto custom-scroll space-y-5 flex-1">
+        <!-- Main Poster Feature -->
+        <div class="gallery-item group rounded-2xl overflow-hidden border border-slate-200 shadow-sm relative bg-slate-50" data-cat="poster">
+          <div class="aspect-[3/4] max-h-80 w-full overflow-hidden bg-slate-200">
+            <img src="assets/poster.jpg" alt="메인 포스터" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+          </div>
+          <div class="p-3.5 bg-white">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded">Official Poster</span>
+              <span class="text-[11px] text-slate-400">7기 메인 비주얼</span>
+            </div>
+            <p class="font-jua text-sm text-slate-800 mt-1">디즈니와 지브리의 행방불명 공식 포스터</p>
+            <p class="text-xs text-slate-500 mt-0.5">센과 치히로의 붉은 다리와 신데렐라 성이 만나는 환상적인 세계</p>
+          </div>
+        </div>
+
+        <!-- Activity 1 -->
+        <div class="gallery-item group rounded-2xl overflow-hidden border border-slate-200 shadow-sm relative bg-slate-50" data-cat="screening">
+          <div class="aspect-video w-full overflow-hidden bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=800&auto=format&fit=crop" alt="영화 상영회" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+          </div>
+          <div class="p-3.5 bg-white">
+            <span class="text-[11px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded">정기 상영회</span>
+            <p class="font-jua text-sm text-slate-800 mt-1">빔프로젝터 영화관 대관 상영회 & 팝콘 타임</p>
+            <p class="text-xs text-slate-500 mt-0.5">하울의 움직이는 성 & 라푼젤 함께 보고 나누는 심야 감상 토크!</p>
+          </div>
+        </div>
+
+        <!-- Activity 2 -->
+        <div class="gallery-item group rounded-2xl overflow-hidden border border-slate-200 shadow-sm relative bg-slate-50" data-cat="exhibit">
+          <div class="aspect-video w-full overflow-hidden bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop" alt="전시회 나들이" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+          </div>
+          <div class="p-3.5 bg-white">
+            <span class="text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">특별 나들이</span>
+            <p class="font-jua text-sm text-slate-800 mt-1">스튜디오 지브리 전시회 & 디즈니 스토어 탐방</p>
+            <p class="text-xs text-slate-500 mt-0.5">다 함께 굿즈도 구경하고 인생네컷 찍는 설레는 주말 나들이</p>
+          </div>
+        </div>
+
+        <!-- Activity 3 -->
+        <div class="gallery-item group rounded-2xl overflow-hidden border border-slate-200 shadow-sm relative bg-slate-50" data-cat="party">
+          <div class="aspect-video w-full overflow-hidden bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800&auto=format&fit=crop" alt="피크닉 & 보드게임" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+          </div>
+          <div class="p-3.5 bg-white">
+            <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">친목 피크닉</span>
+            <p class="font-jua text-sm text-slate-800 mt-1">한강 한낮 피크닉 & 디즈니/지브리 OST 퀴즈대회</p>
+            <p class="text-xs text-slate-500 mt-0.5">잔디밭에서 맛있는 간식 먹으며 즐기는 보드게임과 최애 장면 퀴즈</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer CTA -->
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex gap-2">
+        <button onclick="closePhotoModal(); startApplication();" class="flex-1 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 text-white font-jua py-3 rounded-xl shadow-md text-sm flex items-center justify-center gap-1.5 transition active:scale-98">
+          <span>마음에 드셨다면 지금 바로 신청하기 ✨</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: ADMIN SUBMISSIONS VIEWER -->
+  <!-- ============================================== -->
+  <div id="adminModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-3xl rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[88vh] border border-white/20 animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="p-4 px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div>
+          <h3 class="font-jua text-lg text-slate-800 flex items-center gap-2">
+            <span>📋</span>
+            <span>7기 지원서 접수 현황 (운영진)</span>
+          </h3>
+          <p class="text-xs text-slate-500">실시간 접수 목록 조회 및 엑셀(CSV) 내보내기</p>
+        </div>
+        <button onclick="closeAdminModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-6 overflow-y-auto custom-scroll flex-1">
+        <div id="adminTableContainer" class="space-y-3">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex flex-wrap gap-2 justify-between items-center">
+        <button onclick="clearAllSubmissions()" class="text-xs text-rose-500 hover:text-rose-700 px-3 py-2 rounded-lg hover:bg-rose-50 transition">
+          모든 접수 내역 삭제
+        </button>
+        <div class="flex gap-2">
+          <button onclick="exportSubmissionsCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 transition active:scale-95">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>CSV (엑셀) 다운로드</span>
+          </button>
+          <button onclick="closeAdminModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold px-4 py-2.5 rounded-xl transition">
+            닫기
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- JAVASCRIPT LOGIC -->
+  <!-- ============================================== -->
+  <script>
+    lucide.createIcons();
+
+    // Audio synthesizer for soft whimsical UI sounds
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function playBeep(type = 'click') {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(540, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.09);
+        } else if (type === 'next') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(460, now);
+          osc.frequency.exponentialRampToValueAtTime(920, now + 0.12);
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.13);
+        } else if (type === 'fanfare') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const chordOsc = audioCtx.createOscillator();
+            const chordGain = audioCtx.createGain();
+            chordOsc.connect(chordGain);
+            chordGain.connect(audioCtx.destination);
+            chordOsc.type = 'sine';
+            chordOsc.frequency.setValueAtTime(freq, now + i * 0.07);
+            chordGain.gain.setValueAtTime(0.15, now + i * 0.07);
+            chordGain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.35);
+            chordOsc.start(now + i * 0.07);
+            chordOsc.stop(now + i * 0.07 + 0.36);
+          });
+        }
+      } catch (e) {
+        console.log("Audio not supported or blocked");
+      }
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      const label = document.getElementById('soundLabel');
+      label.innerText = soundEnabled ? '효과음 ON' : '효과음 OFF';
+      playBeep('click');
+    }
+
+    // ==============================================
+    // 10 OFFICIAL APPLICATION QUESTIONS
+    // ==============================================
+    const questions = [
+      // Q1
+      {
+        id: 'name',
+        title: '1. 이름을 알려주세요.',
+        subtitle: '동아리에서 불릴 실명 또는 닉네임을 작성해 주세요.',
+        type: 'text',
+        placeholder: '예: 성춘향 (또는 김치히로)',
+        required: true,
+      },
+      // Q2
+      {
+        id: 'age_gender',
+        title: '2. 나이와 성별을 알려주세요.',
+        subtitle: '나이와 성별을 형식에 맞춰 적어주세요.',
+        type: 'text',
+        placeholder: '예시: 23세 / 여성 (또는 24세 / 남성)',
+        required: true,
+      },
+      // Q3
+      {
+        id: 'university_major',
+        title: '3. 대학교 / 학과 / 학년을 알려주세요.',
+        subtitle: '휴학생, 졸업생, 취준생은 마지막 재학 정보를 적어주세요. (해당 없으면 "해당 없음")',
+        type: 'text',
+        placeholder: '예시: OO대학교 / 미디어학과 / 3학년',
+        required: true,
+      },
+      // Q4
+      {
+        id: 'contact_insta',
+        title: '4. 연락 가능한 연락처와 인스타그램 ID를 알려주세요.',
+        subtitle: '합격 안내 및 단톡방 초대에 사용됩니다.',
+        type: 'dual_contact',
+        required: true,
+      },
+      // Q5
+      {
+        id: 'favorite_movie',
+        title: '5. 가장 좋아하는 영화나 애니메이션 작품과 그 이유를 소개해 주세요! 🎬',
+        subtitle: '인생 영화, 최애 캐릭터, 기억에 남는 장면 등 자유롭게 적어주세요.',
+        type: 'chips_and_text',
+        chips: ['센과 치히로', '하울의 움직이는 성', '모노노케 히메', '마녀 배달부 키키', '라푼젤', '알라딘', '주토피아', '토이스토리', '엘리멘탈'],
+        placeholder: '예: 하울의 움직이는 성 - 음악과 연출이 너무 아름다워서 지칠 때마다 다시 보는 인생작입니다!',
+        required: true,
+      },
+      // Q6
+      {
+        id: 'team_choice',
+        title: '6. 어떤 조에 들어가고 싶으신가요? 🏰🌿',
+        subtitle: '희망 조를 선택해 주세요. (모집 현황에 따라 배정이 변동될 수 있습니다)',
+        type: 'singleselect',
+        options: [
+          { value: 'disney', label: '🏰 디즈니조 (추가 모집 8명)' },
+          { value: 'ghibli', label: '🌿 지브리조 (추가 모집 12명)' },
+          { value: 'any', label: '💫 둘 다 좋아요! 배정에 맡길게요.' },
+        ],
+        required: true,
+      },
+      // Q7
+      {
+        id: 'activities',
+        title: '7. 동아리에서 가장 해보고 싶은 활동은 무엇인가요? 🎪',
+        subtitle: '원하시는 활동을 모두 선택해 주세요 (복수 선택 가능)',
+        type: 'multiselect_with_etc',
+        options: [
+          { value: 'beam_movie', label: '🍿 빔프로젝터로 영화 감상하기' },
+          { value: 'cinema_new', label: '🎟️ 영화관에서 신작 관람하기' },
+          { value: 'cafe_visit', label: '☕ 애니메이션 관련 카페 방문하기' },
+          { value: 'exhibit_popup', label: '🎨 전시·팝업 탐방하기' },
+          { value: 'introduce_fav', label: '💬 서로의 최애 작품 소개하기' },
+          { value: 'friendship', label: '🤝 영화 취향이 맞는 친구들과 친목 다지기' },
+        ],
+        required: true,
+      },
+      // Q8
+      {
+        id: 'participation_rate',
+        title: '8. 정기 활동 및 번개 모임 참여 가능 정도를 알려주세요. ⏰',
+        subtitle: '활동 주기: 격주 1회 정기 활동 (자율 참여 기본)',
+        type: 'singleselect',
+        options: [
+          { value: 'active_all', label: '🔥 정기 활동과 번개 모두 적극적으로 참여하고 싶어요!' },
+          { value: 'regular_only', label: '🎬 정기 활동 위주로 참여하고 싶어요.' },
+          { value: 'flexible', label: '🍃 일정이 맞을 때 자율적으로 참여하고 싶어요.' },
+        ],
+        required: true,
+      },
+      // Q9
+      {
+        id: 'reason_expectation',
+        title: '9. 이번 동아리에 지원하게 된 이유와 기대하는 점은 무엇인가요? 💌',
+        subtitle: '예시: 새로운 친구 만들기, 취향 공유하기, 다양한 작품 접하기 등',
+        type: 'textarea',
+        placeholder: '함께하고 싶은 열정과 기대되는 점을 자유롭게 적어주세요!',
+        required: true,
+      },
+      // Q10
+      {
+        id: 'self_intro',
+        title: '10. 마지막으로, 함께 활동할 사람들에게 자신을 소개해 주세요! ✨',
+        subtitle: '선택 응답: 성격, 취미, 친해지는 스타일, 함께 보고 싶은 작품 등',
+        type: 'textarea',
+        placeholder: '자유롭게 자신을 소개해 주세요 :) (건너뛰어도 괜찮습니다)',
+        required: false,
+      }
+    ];
+
+    // State
+    let currentStep = 0;
+    const formData = JSON.parse(localStorage.getItem('ghibli_form_data_v2') || '{}');
+
+    // Navigation functions
+    function startApplication() {
+      playBeep('next');
+      document.getElementById('heroView').classList.add('hidden');
+      document.getElementById('formView').classList.remove('hidden');
+      renderStep();
+    }
+
+    function confirmExit() {
+      if (confirm('작성 중인 내용이 저장됩니다. 메인 화면으로 돌아가시겠습니까?')) {
+        playBeep('click');
+        document.getElementById('formView').classList.add('hidden');
+        document.getElementById('heroView').classList.remove('hidden');
+      }
+    }
+
+    function resetToHome() {
+      playBeep('click');
+      currentStep = 0;
+      document.getElementById('successView').classList.add('hidden');
+      document.getElementById('heroView').classList.remove('hidden');
+    }
+
+    function updateProgress() {
+      const total = questions.length;
+      const progressPercent = Math.round(((currentStep + 1) / total) * 100);
+      document.getElementById('progressBar').style.width = `${progressPercent}%`;
+      document.getElementById('stepCounterText').innerText = `질문 ${currentStep + 1} / ${total}`;
+
+      const nextBtnText = document.getElementById('nextBtnText');
+      if (currentStep === total - 1) {
+        nextBtnText.innerText = '✨ 최종 지원서 제출하기';
+      } else {
+        nextBtnText.innerText = '다음 질문으로';
+      }
+    }
+
+    function renderStep() {
+      updateProgress();
+      const q = questions[currentStep];
+      const container = document.getElementById('questionContainer');
+      const valMsg = document.getElementById('validationMsg');
+      valMsg.style.opacity = '0';
+
+      const savedVal = formData[q.id] || '';
+
+      let inputHtml = '';
+
+      if (q.type === 'text') {
+        inputHtml = `
+          <div class="mt-4">
+            <input 
+              id="qInput" 
+              type="text" 
+              value="${savedVal}" 
+              placeholder="${q.placeholder}" 
+              class="w-full bg-white border-2 border-slate-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 rounded-2xl px-5 py-4 text-slate-800 placeholder-slate-400 text-sm sm:text-base outline-none transition-all shadow-xs"
+              autofocus
+            />
+          </div>
+        `;
+      } else if (q.type === 'dual_contact') {
+        const phoneVal = formData['contact_phone'] || '';
+        const instaVal = formData['contact_insta_id'] || '';
+        inputHtml = `
+          <div class="mt-4 space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">📱 연락처 (전화번호) *</label>
+              <input 
+                id="phoneInput" 
+                type="tel" 
+                value="${phoneVal}" 
+                placeholder="예: 010-1234-5678" 
+                class="w-full bg-white border-2 border-slate-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 rounded-2xl px-4 py-3.5 text-slate-800 placeholder-slate-400 text-sm outline-none transition-all shadow-xs"
+                autofocus
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">📸 인스타그램 ID *</label>
+              <input 
+                id="instaInput" 
+                type="text" 
+                value="${instaVal}" 
+                placeholder="예: @disney_ghibli (없을 시 '없음' 기재)" 
+                class="w-full bg-white border-2 border-slate-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 rounded-2xl px-4 py-3.5 text-slate-800 placeholder-slate-400 text-sm outline-none transition-all shadow-xs"
+              />
+            </div>
+          </div>
+        `;
+      } else if (q.type === 'textarea') {
+        inputHtml = `
+          <div class="mt-4">
+            <textarea 
+              id="qInput" 
+              rows="4" 
+              placeholder="${q.placeholder}" 
+              class="w-full bg-white border-2 border-slate-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 rounded-2xl p-4 text-slate-800 placeholder-slate-400 text-sm outline-none transition-all shadow-xs resize-none custom-scroll"
+              autofocus
+            >${savedVal}</textarea>
+          </div>
+        `;
+      } else if (q.type === 'chips_and_text') {
+        const chipsList = q.chips.map(chip => `
+          <button type="button" onclick="appendChip('${chip}')" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-full text-xs text-rose-700 font-medium transition active:scale-95 flex items-center gap-1">
+            <span>✨</span>
+            <span>${chip}</span>
+          </button>
+        `).join('');
+
+        inputHtml = `
+          <div class="mt-3 space-y-3">
+            <div class="flex flex-wrap gap-1.5">
+              ${chipsList}
+            </div>
+            <textarea 
+              id="qInput" 
+              rows="3" 
+              placeholder="${q.placeholder}" 
+              class="w-full bg-white border-2 border-slate-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 rounded-2xl p-4 text-slate-800 placeholder-slate-400 text-sm outline-none transition-all shadow-xs resize-none custom-scroll"
+            >${savedVal}</textarea>
+          </div>
+        `;
+      } else if (q.type === 'multiselect_with_etc') {
+        const selectedArr = Array.isArray(savedVal) ? savedVal : [];
+        const etcText = formData[q.id + '_etc'] || '';
+        const isEtcChecked = selectedArr.includes('기타');
+
+        const optionsHtml = q.options.map((opt) => {
+          const isChecked = selectedArr.includes(opt.value);
+          return `
+            <label class="flex items-center gap-3 p-3 bg-white hover:bg-rose-50/40 border-2 ${isChecked ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'} rounded-2xl cursor-pointer transition-all active:scale-[0.99] select-none">
+              <input type="checkbox" name="multiOpt" value="${opt.value}" ${isChecked ? 'checked' : ''} onchange="toggleMultiOption(this)" class="w-4 h-4 text-rose-600 rounded border-slate-300 focus:ring-rose-400" />
+              <span class="text-xs sm:text-sm font-medium text-slate-700">${opt.label}</span>
+            </label>
+          `;
+        }).join('');
+
+        inputHtml = `
+          <div class="mt-3 space-y-2" id="multiGroup">
+            ${optionsHtml}
+            <label class="flex items-center gap-3 p-3 bg-white hover:bg-rose-50/40 border-2 ${isEtcChecked ? 'border-rose-400 bg-rose-50/40' : 'border-slate-200'} rounded-2xl cursor-pointer transition-all active:scale-[0.99] select-none">
+              <input type="checkbox" name="multiOpt" value="기타" ${isEtcChecked ? 'checked' : ''} onchange="toggleMultiOption(this)" class="w-4 h-4 text-rose-600 rounded border-slate-300 focus:ring-rose-400" />
+              <span class="text-xs sm:text-sm font-medium text-slate-700">기타 (직접 작성)</span>
+            </label>
+            <div id="etcContainer" class="${isEtcChecked ? 'block' : 'hidden'} pt-1">
+              <input 
+                id="etcInput" 
+                type="text" 
+                value="${etcText}" 
+                placeholder="해보고 싶은 기타 활동을 작성해 주세요" 
+                class="w-full bg-white border-2 border-slate-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 rounded-xl px-4 py-2.5 text-xs text-slate-800 outline-none"
+                oninput="saveEtcInput(this.value)"
+              />
+            </div>
+          </div>
+        `;
+      } else if (q.type === 'singleselect') {
+        const optionsHtml = q.options.map((opt) => {
+          const isChecked = savedVal === opt.value;
+          return `
+            <label onclick="selectSingleOption('${opt.value}')" class="flex items-center justify-between p-3.5 bg-white hover:bg-rose-50/40 border-2 ${isChecked ? 'border-rose-400 bg-rose-50/40 shadow-xs' : 'border-slate-200'} rounded-2xl cursor-pointer transition-all active:scale-[0.99] select-none">
+              <span class="text-xs sm:text-sm font-semibold text-slate-700">${opt.label}</span>
+              <div class="w-5 h-5 rounded-full border-2 ${isChecked ? 'border-rose-500 bg-rose-500' : 'border-slate-300'} flex items-center justify-center transition">
+                ${isChecked ? '<i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>' : ''}
+              </div>
+            </label>
+          `;
+        }).join('');
+
+        inputHtml = `
+          <div class="mt-3 space-y-2">
+            ${optionsHtml}
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="animate-in fade-in slide-in-from-right-4 duration-300 space-y-1.5">
+          <div class="inline-flex items-center gap-1.5 text-xs text-rose-600 font-semibold mb-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+            <span>Question ${currentStep + 1} of ${questions.length}</span>
+            ${q.required ? '<span class="text-[10px] text-rose-500 font-bold bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">필수</span>' : '<span class="text-[10px] text-slate-500 font-medium bg-slate-100 px-1.5 py-0.5 rounded">선택</span>'}
+          </div>
+          <h2 class="text-lg sm:text-xl font-jua text-slate-800 leading-snug">
+            ${q.title}
+          </h2>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            ${q.subtitle}
+          </p>
+          ${inputHtml}
+        </div>
+      `;
+
+      lucide.createIcons();
+
+      // Auto-focus input if available
+      const inputEl = document.getElementById('qInput') || document.getElementById('phoneInput');
+      if (inputEl) {
+        inputEl.focus();
+        inputEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && q.type !== 'textarea') {
+            e.preventDefault();
+            nextStep();
+          }
+        });
+      }
+
+      const instaEl = document.getElementById('instaInput');
+      if (instaEl) {
+        instaEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            nextStep();
+          }
+        });
+      }
+    }
+
+    function appendChip(chipText) {
+      playBeep('click');
+      const input = document.getElementById('qInput');
+      if (input) {
+        if (input.value.trim() === '') {
+          input.value = chipText;
+        } else if (!input.value.includes(chipText)) {
+          input.value += `, ${chipText}`;
+        }
+        input.focus();
+      }
+    }
+
+    function saveEtcInput(val) {
+      const q = questions[currentStep];
+      formData[q.id + '_etc'] = val;
+      localStorage.setItem('ghibli_form_data_v2', JSON.stringify(formData));
+    }
+
+    function toggleMultiOption(checkbox) {
+      playBeep('click');
+      const q = questions[currentStep];
+      let selected = formData[q.id] || [];
+      if (!Array.isArray(selected)) selected = [];
+
+      if (checkbox.checked) {
+        if (!selected.includes(checkbox.value)) selected.push(checkbox.value);
+      } else {
+        selected = selected.filter(v => v !== checkbox.value);
+      }
+      formData[q.id] = selected;
+      localStorage.setItem('ghibli_form_data_v2', JSON.stringify(formData));
+      renderStep();
+    }
+
+    function selectSingleOption(val) {
+      playBeep('click');
+      const q = questions[currentStep];
+      formData[q.id] = val;
+      localStorage.setItem('ghibli_form_data_v2', JSON.stringify(formData));
+      renderStep();
+      setTimeout(() => {
+        nextStep();
+      }, 250);
+    }
+
+    function validateCurrentStep() {
+      const q = questions[currentStep];
+      const valMsg = document.getElementById('validationMsg');
+
+      if (q.type === 'text' || q.type === 'textarea' || q.type === 'chips_and_text') {
+        const input = document.getElementById('qInput');
+        const val = input ? input.value.trim() : '';
+        if (q.required && !val) {
+          showError('필수 입력 항목입니다. 내용을 입력해 주세요!');
+          if (input) input.focus();
+          return false;
+        }
+        formData[q.id] = val;
+      } else if (q.type === 'dual_contact') {
+        const phone = document.getElementById('phoneInput')?.value.trim() || '';
+        const insta = document.getElementById('instaInput')?.value.trim() || '';
+        if (!phone) {
+          showError('연락처(전화번호)를 입력해 주세요!');
+          document.getElementById('phoneInput')?.focus();
+          return false;
+        }
+        if (!insta) {
+          showError('인스타그램 ID를 입력해 주세요 (없을 시 없음 기재)');
+          document.getElementById('instaInput')?.focus();
+          return false;
+        }
+        formData['contact_phone'] = phone;
+        formData['contact_insta_id'] = insta;
+      } else if (q.type === 'multiselect_with_etc') {
+        const selected = formData[q.id] || [];
+        if (q.required && selected.length === 0) {
+          showError('해보고 싶은 활동을 최소 1개 이상 선택해 주세요!');
+          return false;
+        }
+      } else if (q.type === 'singleselect') {
+        const selected = formData[q.id];
+        if (q.required && !selected) {
+          showError('옵션을 하나 선택해 주세요!');
+          return false;
+        }
+      }
+
+      localStorage.setItem('ghibli_form_data_v2', JSON.stringify(formData));
+      return true;
+    }
+
+    function showError(msg) {
+      const valMsg = document.getElementById('validationMsg');
+      valMsg.innerText = msg;
+      valMsg.style.opacity = '1';
+      const container = document.getElementById('questionContainer');
+      container.classList.add('translate-x-1');
+      setTimeout(() => container.classList.remove('translate-x-1'), 120);
+    }
+
+    function nextStep() {
+      if (!validateCurrentStep()) return;
+
+      playBeep('next');
+      if (currentStep < questions.length - 1) {
+        currentStep++;
+        renderStep();
+      } else {
+        finishApplication();
+      }
+    }
+
+    function prevStep() {
+      playBeep('click');
+      if (currentStep > 0) {
+        currentStep--;
+        renderStep();
+      } else {
+        confirmExit();
+      }
+    }
+
+    function finishApplication() {
+      playBeep('fanfare');
+
+      confetti({
+        particleCount: 85,
+        spread: 75,
+        origin: { y: 0.6 },
+        colors: ['#E63946', '#F4A261', '#7EC8E3', '#2A9D8F', '#FFD166']
+      });
+
+      // Populate Boarding Ticket
+      const teamMap = {
+        'disney': '🏰 디즈니조 (8명 모집)',
+        'ghibli': '🌿 지브리조 (12명 모집)',
+        'any': '💫 배정 자율 (디즈니/지브리 무관)'
+      };
+
+      document.getElementById('ticketName').innerText = formData.name || '지원자';
+      document.getElementById('ticketTeam').innerText = teamMap[formData.team_choice] || '조 배정 중';
+      document.getElementById('ticketContact').innerText = formData.contact_phone || '-';
+      document.getElementById('ticketInsta').innerText = formData.contact_insta_id || '-';
+      document.getElementById('ticketFavorite').innerText = formData.favorite_movie || '디즈니 & 지브리';
+
+      const now = new Date();
+      const dateStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      document.getElementById('ticketDate').innerText = dateStr;
+
+      // Switch view
+      document.getElementById('formView').classList.add('hidden');
+      document.getElementById('successView').classList.remove('hidden');
+
+      // Save submission record
+      const submissionHistory = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+      submissionHistory.push({
+        ...formData,
+        submittedAt: dateStr
+      });
+      localStorage.setItem('ghibli_7th_submissions', JSON.stringify(submissionHistory));
+      updateSubmissionCount();
+    }
+
+    function shareApplication() {
+      playBeep('click');
+      if (navigator.share) {
+        navigator.share({
+          title: '🎞️ 디즈니와 지브리의 행방불명 7기 모집',
+          text: '대학생 연합 영화·애니 친목동아리 「디즈니와 지브리의 행방불명」 7기 크루 모집 중! 함께해요 🤍',
+          url: window.location.href,
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('신청 링크가 클립보드에 복사되었습니다! 친구들에게 공유해 보세요 💌');
+      }
+    }
+
+    function updateSubmissionCount() {
+      const submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+      const countEl = document.getElementById('submissionCount');
+      if (countEl) countEl.innerText = submissions.length;
+    }
+
+    // ==============================================
+    // MODALS: INTRO, PHOTO, ADMIN
+    // ==============================================
+    function openIntroModal() {
+      playBeep('click');
+      document.getElementById('introModal').classList.remove('hidden');
+    }
+    function closeIntroModal() {
+      playBeep('click');
+      document.getElementById('introModal').classList.add('hidden');
+    }
+
+    function openPhotoModal() {
+      playBeep('click');
+      document.getElementById('photoModal').classList.remove('hidden');
+    }
+    function closePhotoModal() {
+      playBeep('click');
+      document.getElementById('photoModal').classList.add('hidden');
+    }
+
+    function filterGallery(category) {
+      playBeep('click');
+      const tabs = document.querySelectorAll('.gallery-tab');
+      tabs.forEach(tab => {
+        tab.classList.remove('bg-rose-50', 'text-rose-600', 'border-rose-200', 'font-semibold');
+        tab.classList.add('bg-slate-100', 'text-slate-600');
+      });
+      event.currentTarget.classList.add('bg-rose-50', 'text-rose-600', 'border-rose-200', 'font-semibold');
+      event.currentTarget.classList.remove('bg-slate-100', 'text-slate-600');
+
+      const items = document.querySelectorAll('.gallery-item');
+      items.forEach(item => {
+        if (category === 'all' || item.dataset.cat === category) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function openAdminModal() {
+      playBeep('click');
+      const submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+      const container = document.getElementById('adminTableContainer');
+
+      if (submissions.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-slate-400 space-y-2">
+            <i data-lucide="inbox" class="w-12 h-12 mx-auto text-slate-300"></i>
+            <p class="font-jua text-base text-slate-600">아직 접수된 7기 지원서가 없습니다.</p>
+            <p class="text-xs">신청자가 접수하면 여기에 10개 문항의 상세 응답이 기록됩니다.</p>
+          </div>
+        `;
+      } else {
+        const teamMap = { 'disney': '🏰 디즈니조', 'ghibli': '🌿 지브리조', 'any': '💫 무관(자율)' };
+        const rateMap = { 
+          'active_all': '🔥 정기+번개 적극참여', 
+          'regular_only': '🎬 정기활동 위주', 
+          'flexible': '🍃 자율참여' 
+        };
+
+        container.innerHTML = submissions.map((s, idx) => {
+          const actList = Array.isArray(s.activities) ? s.activities.join(', ') : (s.activities || '-');
+          const etcPart = s.activities_etc ? ` (기타: ${s.activities_etc})` : '';
+
+          return `
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 text-xs">
+              <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span class="font-bold text-slate-800 text-sm">#${idx + 1} ${s.name || '미입력'} (${teamMap[s.team_choice] || '-'})</span>
+                <span class="text-slate-400 text-[11px]">${s.submittedAt || ''}</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600">
+                <p><span class="font-semibold text-slate-700">1. 성별/나이:</span> ${s.age_gender || '-'}</p>
+                <p><span class="font-semibold text-slate-700">2. 대학/학과/학년:</span> ${s.university_major || '-'}</p>
+                <p><span class="font-semibold text-slate-700">3. 연락처:</span> ${s.contact_phone || '-'}</p>
+                <p><span class="font-semibold text-slate-700">4. 인스타그램:</span> ${s.contact_insta_id || '-'}</p>
+                <p class="sm:col-span-2"><span class="font-semibold text-slate-700">5. 최애 작품 & 이유:</span> ${s.favorite_movie || '-'}</p>
+                <p class="sm:col-span-2"><span class="font-semibold text-slate-700">6. 희망 활동:</span> ${actList}${etcPart}</p>
+                <p class="sm:col-span-2"><span class="font-semibold text-slate-700">7. 참여도:</span> ${rateMap[s.participation_rate] || '-'}</p>
+                <p class="sm:col-span-2 bg-white p-2.5 rounded-xl border border-slate-200"><span class="font-semibold text-slate-700">8. 지원 이유 & 기대:</span> ${s.reason_expectation || '-'}</p>
+                ${s.self_intro ? `<p class="sm:col-span-2 bg-white p-2.5 rounded-xl border border-slate-200"><span class="font-semibold text-slate-700">9. 자기소개:</span> ${s.self_intro}</p>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      lucide.createIcons();
+      document.getElementById('adminModal').classList.remove('hidden');
+    }
+
+    function closeAdminModal() {
+      playBeep('click');
+      document.getElementById('adminModal').classList.add('hidden');
+    }
+
+    function clearAllSubmissions() {
+      if (confirm('정말로 모든 지원 데이터를 삭제하시겠습니까? (복구할 수 없습니다)')) {
+        localStorage.removeItem('ghibli_7th_submissions');
+        updateSubmissionCount();
+        openAdminModal();
+      }
+    }
+
+    function exportSubmissionsCSV() {
+      const submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+      if (submissions.length === 0) {
+        alert('내보낼 지원 데이터가 없습니다.');
+        return;
+      }
+
+      const teamMap = { 'disney': '디즈니조(8명)', 'ghibli': '지브리조(12명)', 'any': '자율배정' };
+      const rateMap = { 
+        'active_all': '정기+번개 적극참여', 
+        'regular_only': '정기활동 위주', 
+        'flexible': '자율참여' 
+      };
+
+      const headers = [
+        '접수일시',
+        '이름',
+        '나이/성별',
+        '대학/학과/학년',
+        '연락처',
+        '인스타그램ID',
+        '희망조',
+        '최애작품과이유',
+        '희망활동',
+        '기타활동의견',
+        '참여가능정도',
+        '지원동기및기대',
+        '자기소개'
+      ];
+
+      const rows = submissions.map(s => [
+        `"${s.submittedAt || ''}"`,
+        `"${(s.name || '').replace(/"/g, '""')}"`,
+        `"${(s.age_gender || '').replace(/"/g, '""')}"`,
+        `"${(s.university_major || '').replace(/"/g, '""')}"`,
+        `"${(s.contact_phone || '').replace(/"/g, '""')}"`,
+        `"${(s.contact_insta_id || '').replace(/"/g, '""')}"`,
+        `"${teamMap[s.team_choice] || s.team_choice || ''}"`,
+        `"${(s.favorite_movie || '').replace(/"/g, '""')}"`,
+        `"${(Array.isArray(s.activities) ? s.activities.join(';') : (s.activities || '')).replace(/"/g, '""')}"`,
+        `"${(s.activities_etc || '').replace(/"/g, '""')}"`,
+        `"${rateMap[s.participation_rate] || s.participation_rate || ''}"`,
+        `"${(s.reason_expectation || '').replace(/"/g, '""')}"`,
+        `"${(s.self_intro || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `디즈니_지브리_7기_지원자_명단_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Modal background click handling
+    ['introModal', 'photoModal', 'adminModal'].forEach(id => {
+      document.getElementById(id).addEventListener('click', (e) => {
+        if (e.target.id === id) {
+          document.getElementById(id).classList.add('hidden');
+        }
+      });
+    });
+
+    // Init count on load
+    updateSubmissionCount();
+  </script>
+</body>
+</html>
