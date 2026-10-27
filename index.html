@@ -597,9 +597,9 @@
       {
         id: 'name',
         title: '이름을 알려주세요 ✨',
-        subtitle: '실명이나 편하게 불리고 싶은 닉네임',
+        subtitle: '',
         type: 'text',
-        placeholder: '예: 성춘향 (하쿠)',
+        placeholder: '본명을 입력해 주세요 (예: 성춘향)',
         required: true,
       },
       {
@@ -877,9 +877,7 @@
           <h2 class="text-lg sm:text-xl font-jua text-slate-800 leading-snug">
             ${q.title}
           </h2>
-          <p class="font-gaegu text-sm text-slate-500">
-            ${q.subtitle}
-          </p>
+          ${q.subtitle ? `<p class="font-gaegu text-sm text-slate-500">${q.subtitle}</p>` : ''}
           ${inputHtml}
         </div>
       `;
