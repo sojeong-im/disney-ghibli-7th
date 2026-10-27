@@ -2,9 +2,10 @@
 
 대학생 연합 영화·애니 친목동아리 **「디즈니와 지브리의 행방불명」** 7기 신규 크루 모집을 위한 반응형 웹 어플리케이션입니다.
 
-- 🌐 **배포 사이트 URL**: [https://disney-ghibli-7th.netlify.app](https://disney-ghibli-7th.netlify.app)
+- 🌐 **배포 사이트 URL**: [https://disney-ghibli.netlify.app](https://disney-ghibli.netlify.app)
+- 🔥 **Firebase Project**: `disney-ghibli` (Firestore `applications` 컬렉션 실시간 연동)
 - 🐙 **GitHub 저장소**: [https://github.com/sojeong-im/disney-ghibli-7th](https://github.com/sojeong-im/disney-ghibli-7th)
-- ⚙️ **Netlify 대시보드**: [https://app.netlify.com/projects/disney-ghibli-7th](https://app.netlify.com/projects/disney-ghibli-7th)
+- ⚙️ **Netlify 대시보드**: [https://app.netlify.com/projects/disney-ghibli](https://app.netlify.com/projects/disney-ghibli)
 
 ---
 
