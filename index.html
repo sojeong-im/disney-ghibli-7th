@@ -255,12 +255,12 @@
           <i data-lucide="arrow-right" class="w-5 h-5"></i>
         </button>
 
-        <!-- 2. 활동사진 보기 (Secondary Button) -->
+        <!-- 2. 우리는 이런 걸 좋아해요 (Secondary Button) -->
         <button 
           onclick="openPhotoModal()" 
           class="w-full bg-white hover:bg-amber-50/50 border-2 border-amber-200/80 text-slate-700 py-3 px-6 rounded-2xl font-jua text-base transition-all flex items-center justify-center gap-2 active:scale-[0.99] shadow-xs">
-          <i data-lucide="camera" class="w-4 h-4 text-rose-500"></i>
-          <span>📸 활동 사진첩 둘러보기</span>
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+          <span>📸 우리는 이런 걸 좋아해요!</span>
         </button>
 
         <!-- Minimal Footer Link -->
@@ -413,46 +413,82 @@
   </main>
 
   <!-- ============================================== -->
-  <!-- MODAL: PHOTO GALLERY -->
+  <!-- MODAL: PHOTO GALLERY (우리는 이런 걸 좋아해요) -->
   <!-- ============================================== -->
   <div id="photoModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-[#FAF7F0] w-full max-w-md rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] border-2 border-white">
       
       <div class="p-4 px-5 border-b border-amber-200/60 flex items-center justify-between bg-white/70">
-        <div class="flex items-center gap-2">
-          <span class="text-lg">📸</span>
-          <h3 class="font-jua text-base text-slate-800">동아리 활동 사진첩</h3>
+        <div>
+          <h3 class="font-jua text-base text-slate-800 flex items-center gap-1.5">
+            <span>✨</span>
+            <span>우리는 이런 걸 좋아해요!</span>
+          </h3>
+          <p class="font-gaegu text-xs text-slate-500 font-bold mt-0.5">애니메이션·캐릭터 굿즈와 소소한 취향 공유 🤍</p>
         </div>
         <button onclick="closePhotoModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div class="p-4 overflow-y-auto custom-scroll space-y-4 flex-1">
-        <!-- Poster -->
-        <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100">
-          <img src="assets/poster.jpg" alt="7기 메인 포스터" class="w-full rounded-xl" />
-          <p class="font-gaegu text-sm font-bold text-center text-slate-600 pt-2">🎞️ 7기 공식 포스터 (센과 치히로 × 디즈니)</p>
+      <div class="p-4 overflow-y-auto custom-scroll flex-1">
+        <div class="grid grid-cols-2 gap-3">
+          <!-- 1. One Piece Sabo -->
+          <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100/80 overflow-hidden transform hover:scale-[1.02] transition">
+            <div class="w-full aspect-[3/4] overflow-hidden rounded-xl bg-slate-100">
+              <img src="assets/activity_onepiece_sabo.jpg" alt="원피스 스토어 사보 피규어" class="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <!-- 2. Zanmang Loopy -->
+          <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100/80 overflow-hidden transform hover:scale-[1.02] transition">
+            <div class="w-full aspect-[3/4] overflow-hidden rounded-xl bg-slate-100">
+              <img src="assets/activity_loopy_popup.jpg" alt="잔망루피 팝업스토어" class="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <!-- 3. Rilakkuma Store -->
+          <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100/80 overflow-hidden transform hover:scale-[1.02] transition">
+            <div class="w-full aspect-[3/4] overflow-hidden rounded-xl bg-slate-100">
+              <img src="assets/activity_rilakkuma_store.jpg" alt="리락쿠마 스토어" class="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <!-- 4. Shin-chan Goods -->
+          <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100/80 overflow-hidden transform hover:scale-[1.02] transition">
+            <div class="w-full aspect-[3/4] overflow-hidden rounded-xl bg-slate-100">
+              <img src="assets/activity_shinchan_goods.jpg" alt="짱구 피규어 소장품" class="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <!-- 5. One Piece Wanted -->
+          <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100/80 overflow-hidden transform hover:scale-[1.02] transition">
+            <div class="w-full aspect-[3/4] overflow-hidden rounded-xl bg-slate-100">
+              <img src="assets/activity_onepiece_wanted.jpg" alt="원피스 현상수배지 포스터" class="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <!-- 6. Official Poster -->
+          <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100/80 overflow-hidden transform hover:scale-[1.02] transition">
+            <div class="w-full aspect-[3/4] overflow-hidden rounded-xl bg-slate-100">
+              <img src="assets/poster.jpg" alt="7기 공식 포스터" class="w-full h-full object-cover" />
+            </div>
+          </div>
         </div>
 
-        <!-- Screening -->
-        <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100">
-          <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=700&auto=format&fit=crop" alt="영화 상영회" class="w-full aspect-video object-cover rounded-xl" />
-          <p class="font-gaegu text-sm font-bold text-center text-slate-600 pt-2">🍿 빔프로젝터 영화관 대관 상영회</p>
-        </div>
-
-        <!-- Exhibit -->
-        <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100">
-          <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=700&auto=format&fit=crop" alt="전시회 나들이" class="w-full aspect-video object-cover rounded-xl" />
-          <p class="font-gaegu text-sm font-bold text-center text-slate-600 pt-2">🎨 스튜디오 지브리 전시 & 굿즈샵 투어</p>
-        </div>
-
-        <!-- Picnic -->
-        <div class="bg-white p-2 rounded-2xl shadow-sm border border-amber-100">
-          <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=700&auto=format&fit=crop" alt="피크닉 번개" class="w-full aspect-video object-cover rounded-xl" />
-          <p class="font-gaegu text-sm font-bold text-center text-slate-600 pt-2">🍃 한강 한낮 피크닉 & OST 퀴즈</p>
-        </div>
+        <p class="font-gaegu text-center text-xs text-amber-900/60 font-bold mt-4">
+          취향이 통하는 사람들과 함께 영화 속 세상으로 🚂✨
+        </p>
       </div>
+
+      <div class="p-3 bg-white/70 border-t border-amber-200/60">
+        <button onclick="closePhotoModal(); startApplication();" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-jua py-3 rounded-xl text-sm transition">
+          마음에 드셨다면 지금 신청하기 ✨
+        </button>
+      </div>
+
+    </div>
+  </div>
 
       <div class="p-3 bg-white/70 border-t border-amber-200/60">
         <button onclick="closePhotoModal(); startApplication();" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-jua py-3 rounded-xl text-sm transition">
