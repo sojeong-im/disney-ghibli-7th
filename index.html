@@ -21,6 +21,10 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Firebase App & Firestore SDKs (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -528,6 +532,28 @@
   <script>
     lucide.createIcons();
 
+    // Firebase Initialization
+    const firebaseConfig = {
+      apiKey: "AIzaSyC3p6doNq4qW9InQxUia81dwd1r1hlB6wQ",
+      authDomain: "disney-ghibli.firebaseapp.com",
+      projectId: "disney-ghibli",
+      storageBucket: "disney-ghibli.firebasestorage.app",
+      messagingSenderId: "1027457439444",
+      appId: "1:1027457439444:web:a7a745c8b2d5e52dd4cd41",
+      measurementId: "G-3EFCVMZL9Q"
+    };
+
+    let db = null;
+    try {
+      if (typeof firebase !== 'undefined') {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        console.log("Firebase Firestore connected: disney-ghibli");
+      }
+    } catch (err) {
+      console.warn("Firebase initialization warning:", err);
+    }
+
     // Sound Synthesizer (Cute pops)
     let soundEnabled = true;
     let audioCtx = null;
@@ -1028,7 +1054,7 @@
       }
     }
 
-    function finishApplication() {
+    async function finishApplication() {
       playBeep('fanfare');
 
       confetti({
@@ -1056,12 +1082,39 @@
       document.getElementById('formView').classList.add('hidden');
       document.getElementById('successView').classList.remove('hidden');
 
+      // LocalStorage Backup
       const submissionHistory = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
       submissionHistory.push({
         ...formData,
         submittedAt: dateStr
       });
       localStorage.setItem('ghibli_7th_submissions', JSON.stringify(submissionHistory));
+
+      // Firebase Firestore Cloud Save
+      if (db) {
+        try {
+          await db.collection("applications").add({
+            name: formData.name || '',
+            age_gender: formData.age_gender || '',
+            university_major: formData.university_major || '',
+            contact_phone: formData.contact_phone || '',
+            contact_insta_id: formData.contact_insta_id || '',
+            favorite_movie: formData.favorite_movie || '',
+            team_choice: formData.team_choice || '',
+            activities: formData.activities || [],
+            activities_etc: formData.activities_etc || '',
+            participation_rate: formData.participation_rate || '',
+            reason_expectation: formData.reason_expectation || '',
+            self_intro: formData.self_intro || '',
+            submittedAt: dateStr,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          console.log("Firebase Firestore 저장 완료!");
+        } catch (firebaseErr) {
+          console.error("Firebase Firestore 저장 오류:", firebaseErr);
+        }
+      }
+
       updateSubmissionCount();
     }
 
@@ -1080,9 +1133,20 @@
     }
 
     function updateSubmissionCount() {
-      const submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
-      const countEl = document.getElementById('submissionCount');
-      if (countEl) countEl.innerText = submissions.length;
+      if (db) {
+        db.collection("applications").onSnapshot((snapshot) => {
+          const countEl = document.getElementById('submissionCount');
+          if (countEl) countEl.innerText = snapshot.size;
+        }, (err) => {
+          const submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+          const countEl = document.getElementById('submissionCount');
+          if (countEl) countEl.innerText = submissions.length;
+        });
+      } else {
+        const submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+        const countEl = document.getElementById('submissionCount');
+        if (countEl) countEl.innerText = submissions.length;
+      }
     }
 
     // Modals
@@ -1092,41 +1156,70 @@
     function openPhotoModal() { playBeep('pop'); document.getElementById('photoModal').classList.remove('hidden'); }
     function closePhotoModal() { playBeep('click'); document.getElementById('photoModal').classList.add('hidden'); }
 
-    function openAdminModal() {
+    let allLoadedSubmissions = [];
+
+    async function openAdminModal() {
       playBeep('pop');
-      const submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
       const container = document.getElementById('adminTableContainer');
+      container.innerHTML = `
+        <div class="text-center py-8 text-slate-400">
+          <p class="font-jua text-sm text-slate-600">파이어베이스에서 지원서 불러오는 중...</p>
+        </div>
+      `;
+      document.getElementById('adminModal').classList.remove('hidden');
+
+      let submissions = [];
+
+      if (db) {
+        try {
+          const snapshot = await db.collection("applications").get();
+          snapshot.forEach(doc => {
+            submissions.push({ id: doc.id, ...doc.data() });
+          });
+          // Sort latest first
+          submissions.sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
+        } catch (e) {
+          console.warn("Firestore fetch error, fallback to local:", e);
+          submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+        }
+      } else {
+        submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+      }
+
+      allLoadedSubmissions = submissions;
 
       if (submissions.length === 0) {
         container.innerHTML = `
           <div class="text-center py-10 text-slate-400">
             <p class="font-jua text-base text-slate-600">아직 접수된 지원서가 없습니다.</p>
+            <p class="text-xs text-slate-400 mt-1">지원자가 신청서를 제출하면 실시간으로 여기에 누적됩니다.</p>
           </div>
         `;
       } else {
-        const teamMap = { 'disney': '디즈니조', 'ghibli': '지브리조', 'any': '자율배정' };
+        const teamMap = { 'disney': '🏰 디즈니조', 'ghibli': '🌿 지브리조', 'any': '자율배정' };
         container.innerHTML = submissions.map((s, idx) => `
           <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-xs">
             <div class="flex justify-between font-bold text-slate-800">
-              <span>#${idx + 1} ${s.name || '-'} (${teamMap[s.team_choice] || '-'})</span>
+              <span>#${idx + 1} ${s.name || '-'} (${teamMap[s.team_choice] || s.team_choice || '-'})</span>
               <span class="text-slate-400 text-[10px] font-normal">${s.submittedAt || ''}</span>
             </div>
             <p><span class="text-slate-500">연락처/인스타:</span> ${s.contact_phone || '-'} / ${s.contact_insta_id || '-'}</p>
             <p><span class="text-slate-500">학교/나이:</span> ${s.university_major || '-'} (${s.age_gender || '-'})</p>
             <p><span class="text-slate-500">최애작:</span> ${s.favorite_movie || '-'}</p>
+            <p><span class="text-slate-500">희망활동:</span> ${(Array.isArray(s.activities) ? s.activities.join(', ') : s.activities) || '-'}${s.activities_etc ? ` (기타: ${s.activities_etc})` : ''}</p>
             ${s.reason_expectation ? `<p class="bg-white p-2 rounded border border-slate-200"><span class="text-slate-500">지원동기:</span> ${s.reason_expectation}</p>` : ''}
+            ${s.self_intro ? `<p class="bg-white p-2 rounded border border-slate-200"><span class="text-slate-500">자기소개:</span> ${s.self_intro}</p>` : ''}
           </div>
         `).join('');
       }
 
       lucide.createIcons();
-      document.getElementById('adminModal').classList.remove('hidden');
     }
 
     function closeAdminModal() { playBeep('click'); document.getElementById('adminModal').classList.add('hidden'); }
 
-    function clearAllSubmissions() {
-      if (confirm('모든 접수 내역을 삭제할까요?')) {
+    async function clearAllSubmissions() {
+      if (confirm('모든 접수 내역을 삭제할까요? (로컬 내역이 삭제됩니다)')) {
         localStorage.removeItem('ghibli_7th_submissions');
         updateSubmissionCount();
         openAdminModal();
@@ -1134,8 +1227,19 @@
     }
 
     function exportSubmissionsCSV() {
-      const submissions = JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
-      if (submissions.length === 0) { alert('데이터가 없습니다.'); return; }
+      const submissions = allLoadedSubmissions.length > 0 
+        ? allLoadedSubmissions 
+        : JSON.parse(localStorage.getItem('ghibli_7th_submissions') || '[]');
+
+      if (submissions.length === 0) { alert('다운로드할 데이터가 없습니다.'); return; }
+      
+      const teamMap = { 'disney': '디즈니조(8명)', 'ghibli': '지브리조(12명)', 'any': '자율배정' };
+      const rateMap = { 
+        'active_all': '정기+번개 적극참여', 
+        'regular_only': '정기활동 위주', 
+        'flexible': '자율참여' 
+      };
+
       const headers = ['일시', '이름', '나이/성별', '학교/학과/학년', '연락처', '인스타', '희망조', '최애작', '희망활동', '기타활동', '참여도', '지원동기', '자기소개'];
       const rows = submissions.map(s => [
         `"${s.submittedAt || ''}"`,
@@ -1144,11 +1248,11 @@
         `"${(s.university_major || '').replace(/"/g, '""')}"`,
         `"${(s.contact_phone || '').replace(/"/g, '""')}"`,
         `"${(s.contact_insta_id || '').replace(/"/g, '""')}"`,
-        `"${s.team_choice || ''}"`,
+        `"${teamMap[s.team_choice] || s.team_choice || ''}"`,
         `"${(s.favorite_movie || '').replace(/"/g, '""')}"`,
         `"${(Array.isArray(s.activities) ? s.activities.join(';') : (s.activities || '')).replace(/"/g, '""')}"`,
         `"${(s.activities_etc || '').replace(/"/g, '""')}"`,
-        `"${s.participation_rate || ''}"`,
+        `"${rateMap[s.participation_rate] || s.participation_rate || ''}"`,
         `"${(s.reason_expectation || '').replace(/"/g, '""')}"`,
         `"${(s.self_intro || '').replace(/"/g, '""')}"`
       ]);
