@@ -639,10 +639,11 @@
         required: true,
       },
       {
-        id: 'contact_insta',
-        title: '연락처와 인스타그램 ID 📱',
-        subtitle: '합격 안내 및 단톡방 초대에 사용돼요',
-        type: 'dual_contact',
+        id: 'contact_phone',
+        title: '연락 가능한 연락처 📱',
+        subtitle: '합격 안내 및 카카오톡 단톡방 초대에 사용돼요',
+        type: 'text',
+        placeholder: '010-1234-5678',
         required: true,
       },
       {
@@ -774,34 +775,6 @@
             />
           </div>
         `;
-      } else if (q.type === 'dual_contact') {
-        const phoneVal = formData['contact_phone'] || '';
-        const instaVal = formData['contact_insta_id'] || '';
-        inputHtml = `
-          <div class="mt-3 space-y-2.5">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">📱 연락처 (전화번호) *</label>
-              <input 
-                id="phoneInput" 
-                type="tel" 
-                value="${phoneVal}" 
-                placeholder="010-1234-5678" 
-                class="w-full bg-white border-2 border-amber-200/80 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 rounded-2xl px-4 py-3 text-slate-800 placeholder-slate-400 text-sm outline-none transition shadow-xs"
-                autofocus
-              />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">📸 인스타그램 ID *</label>
-              <input 
-                id="instaInput" 
-                type="text" 
-                value="${instaVal}" 
-                placeholder="@아이디 (없을 시 '없음')" 
-                class="w-full bg-white border-2 border-amber-200/80 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 rounded-2xl px-4 py-3 text-slate-800 placeholder-slate-400 text-sm outline-none transition shadow-xs"
-              />
-            </div>
-          </div>
-        `;
       } else if (q.type === 'textarea') {
         inputHtml = `
           <div class="mt-3">
@@ -904,21 +877,11 @@
 
       lucide.createIcons();
 
-      const inputEl = document.getElementById('qInput') || document.getElementById('phoneInput');
+      const inputEl = document.getElementById('qInput');
       if (inputEl) {
         inputEl.focus();
         inputEl.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' && q.type !== 'textarea') {
-            e.preventDefault();
-            nextStep();
-          }
-        });
-      }
-
-      const instaEl = document.getElementById('instaInput');
-      if (instaEl) {
-        instaEl.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
             e.preventDefault();
             nextStep();
           }
@@ -984,21 +947,6 @@
           return false;
         }
         formData[q.id] = val;
-      } else if (q.type === 'dual_contact') {
-        const phone = document.getElementById('phoneInput')?.value.trim() || '';
-        const insta = document.getElementById('instaInput')?.value.trim() || '';
-        if (!phone) {
-          showError('연락처(전화번호)를 입력해 주세요!');
-          document.getElementById('phoneInput')?.focus();
-          return false;
-        }
-        if (!insta) {
-          showError('인스타그램 ID를 입력해 주세요 (없을 시 없음 기재)');
-          document.getElementById('instaInput')?.focus();
-          return false;
-        }
-        formData['contact_phone'] = phone;
-        formData['contact_insta_id'] = insta;
       } else if (q.type === 'multiselect_with_etc') {
         const selected = formData[q.id] || [];
         if (q.required && selected.length === 0) {
@@ -1092,7 +1040,6 @@
             age_gender: formData.age_gender || '',
             university_major: formData.university_major || '',
             contact_phone: formData.contact_phone || '',
-            contact_insta_id: formData.contact_insta_id || '',
             favorite_movie: formData.favorite_movie || '',
             team_choice: formData.team_choice || '',
             activities: formData.activities || [],

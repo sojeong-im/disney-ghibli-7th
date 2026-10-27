@@ -224,7 +224,6 @@
                 <th class="py-3 px-4">나이 / 성별</th>
                 <th class="py-3 px-4">학교 / 학과 / 학년</th>
                 <th class="py-3 px-4">연락처</th>
-                <th class="py-3 px-4">인스타그램</th>
                 <th class="py-3 px-4">희망 조</th>
                 <th class="py-3 px-4">참여도</th>
                 <th class="py-3 px-4">접수 일시</th>
@@ -422,7 +421,7 @@
         // Search query
         if (query) {
           const matchString = [
-            s.name, s.contact_phone, s.contact_insta_id, 
+            s.name, s.contact_phone, 
             s.university_major, s.favorite_movie, s.reason_expectation
           ].join(' ').toLowerCase();
           if (!matchString.includes(query)) return false;
@@ -462,7 +461,6 @@
             <td class="py-3 px-4 text-slate-600">${s.age_gender || '-'}</td>
             <td class="py-3 px-4 text-slate-600">${s.university_major || '-'}</td>
             <td class="py-3 px-4 font-mono font-medium text-slate-800">${s.contact_phone || '-'}</td>
-            <td class="py-3 px-4 text-slate-600">${s.contact_insta_id || '-'}</td>
             <td class="py-3 px-4">${teamMap[s.team_choice] || s.team_choice || '-'}</td>
             <td class="py-3 px-4 text-slate-600">${rateMap[s.participation_rate] || s.participation_rate || '-'}</td>
             <td class="py-3 px-4 text-slate-400 text-[11px]">${s.submittedAt || '-'}</td>
@@ -504,8 +502,7 @@
           <div><span class="text-slate-400 font-medium">1. 이름:</span> <p class="font-bold text-slate-800 text-sm mt-0.5">${sub.name || '-'}</p></div>
           <div><span class="text-slate-400 font-medium">2. 나이/성별:</span> <p class="font-bold text-slate-800 text-sm mt-0.5">${sub.age_gender || '-'}</p></div>
           <div class="col-span-2"><span class="text-slate-400 font-medium">3. 학교/학과/학년:</span> <p class="font-semibold text-slate-800 mt-0.5">${sub.university_major || '-'}</p></div>
-          <div><span class="text-slate-400 font-medium">4. 연락처:</span> <p class="font-mono font-bold text-slate-800 mt-0.5">${sub.contact_phone || '-'}</p></div>
-          <div><span class="text-slate-400 font-medium">인스타그램:</span> <p class="font-semibold text-slate-800 mt-0.5">${sub.contact_insta_id || '-'}</p></div>
+          <div class="col-span-2"><span class="text-slate-400 font-medium">4. 연락처:</span> <p class="font-mono font-bold text-slate-800 mt-0.5">${sub.contact_phone || '-'}</p></div>
         </div>
 
         <div class="space-y-1">
@@ -584,7 +581,6 @@
         '나이/성별',
         '대학/학과/학년',
         '연락처',
-        '인스타그램',
         '희망조',
         '최애작품과이유',
         '희망활동',
@@ -600,7 +596,6 @@
         `"${(s.age_gender || '').replace(/"/g, '""')}"`,
         `"${(s.university_major || '').replace(/"/g, '""')}"`,
         `"${(s.contact_phone || '').replace(/"/g, '""')}"`,
-        `"${(s.contact_insta_id || '').replace(/"/g, '""')}"`,
         `"${teamMap[s.team_choice] || s.team_choice || ''}"`,
         `"${(s.favorite_movie || '').replace(/"/g, '""')}"`,
         `"${(Array.isArray(s.activities) ? s.activities.join(';') : (s.activities || '')).replace(/"/g, '""')}"`,
